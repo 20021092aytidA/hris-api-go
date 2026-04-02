@@ -18,3 +18,12 @@ func GetRoles(query string) ([]rolemodel.ViewRole, error) {
 
 	return roles, nil
 }
+
+func CreateRole(role rolemodel.CreateRole) error {
+	post := database.DB.Table("role").Create(role)
+	if post.Error != nil {
+		return post.Error
+	}
+
+	return nil
+}

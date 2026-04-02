@@ -8,4 +8,5 @@ import (
 
 func InitRoute(c *gin.Engine) {
 	c.GET("/hrs-api/roles", rolecontroller.GetRoles)
+	c.POST("/hrs-api/role", rolecontroller.CreateRole)
 }

@@ -18,11 +18,11 @@ type ViewUser struct {
 	ScoreTranscript   *string    `db:"score_transcript" json:"scoreTranscript"`
 	Note              *string    `db:"note" json:"note"`
 	CreatedAt         *time.Time `db:"created_at" json:"createdAt"`
-	CreatedBy         *time.Time `db:"created_by" json:"createdBy"`
+	CreatedBy         *int       `db:"created_by" json:"createdBy"`
 	EditedAt          *time.Time `db:"edited_at" json:"editedAt"`
-	EditedBy          *time.Time `db:"edited_by" json:"editedBy"`
+	EditedBy          *int       `db:"edited_by" json:"editedBy"`
 	DeletedAt         *time.Time `db:"deleted_at" json:"deletedAt"`
-	DeletedBy         *time.Time `db:"deleted_by" json:"deletedBy"`
+	DeletedBy         *int       `db:"deleted_by" json:"deletedBy"`
 	IsDeleted         *string    `db:"is_deleted" json:"isDeleted"`
 }
 
@@ -40,8 +40,8 @@ type CreateUser struct {
 	DegreeCertificate *string    `form:"degree_certificate" db:"degree_certificate" json:"degreeCertificate"`
 	ScoreTranscript   *string    `form:"score_transcript" db:"score_transcript" json:"scoreTranscript"`
 	Note              *string    `form:"note" db:"note" json:"note"`
-	CreatedAt         *time.Time `form:"created_at" db:"created_at" json:"createdAt" binding:"required"`
-	CreatedBy         *time.Time `form:"created_by" db:"created_by" json:"createdBy" binding:"required"`
+	CreatedAt         *time.Time `form:"created_at" db:"created_at" json:"createdAt" binding:"required" time_format:"2006-01-02 15:04:05"`
+	CreatedBy         *int       `form:"created_by" db:"created_by" json:"createdBy" binding:"required"`
 }
 
 type UpdateUser struct {
@@ -58,6 +58,6 @@ type UpdateUser struct {
 	DegreeCertificate *string    `form:"degree_certificate" db:"degree_certificate" json:"degreeCertificate"`
 	ScoreTranscript   *string    `form:"score_transcript" db:"score_transcript" json:"scoreTranscript"`
 	Note              *string    `form:"note" db:"note" json:"note"`
-	EditedAt          *time.Time `form:"edited_at" db:"edited_at" json:"editedAt" binding:"required"`
-	EditedBy          *time.Time `form:"edited_by" db:"edited_by" json:"editedBy" binding:"required"`
+	EditedAt          *time.Time `form:"edited_at" db:"edited_at" json:"editedAt" binding:"required" time_format:"2006-01-02 15:04:05"`
+	EditedBy          *int       `form:"edited_by" db:"edited_by" json:"editedBy" binding:"required"`
 }

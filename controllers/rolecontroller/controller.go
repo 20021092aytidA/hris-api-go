@@ -1,6 +1,7 @@
 package rolecontroller
 
 import (
+	"fmt"
 	"go-hrs/models/rolemodel"
 	"go-hrs/services/roleservice"
 	"net/http"
@@ -27,5 +28,43 @@ func GetRoles(c *gin.Context) {
 		"status":  http.StatusOK,
 		"message": "Successfully retrieve roles!",
 		"data":    roles,
+	})
+}
+
+func CreateRole(c *gin.Context) {
+	var role rolemodel.CreateRole
+	var checkRole []rolemodel.ViewRole
+
+	if err := c.ShouldBind(&role); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to create new role!",
+			"description": "Missing body parameter!",
+		})
+		return
+	}
+
+	checkRole, _ = roleservice.GetRoles(fmt.Sprintf("role_name=%s", *role.RoleName))
+	if len(checkRole) != 0 {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to create new role!",
+			"description": "Duplicate role name!",
+		})
+		return
+	}
+
+	if err := roleservice.CreateRole(role); err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to create new role!",
+			"description": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status":  http.StatusCreated,
+		"message": "Successfully created new role!",
 	})
 }
