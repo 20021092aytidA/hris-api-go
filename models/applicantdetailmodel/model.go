@@ -1,8 +1,8 @@
-package applicationdetailmodel
+package applicantdetailmodel
 
 import "time"
 
-type ViewApplicationDetail struct {
+type ViewApplicantDetail struct {
 	ApplicantDetailID *int       `db:"applicant_detail_id" json:"applicantDetailID"`
 	UserID            *int       `db:"user_id" json:"userID"`
 	ExpectedSalary    *int       `db:"expected_salary" json:"expectedSalary"`
@@ -21,7 +21,7 @@ type ViewApplicationDetail struct {
 	IsDeleted         *string    `db:"is_deleted" json:"isDeleted"`
 }
 
-type CreateApplicationDetail struct {
+type CreateApplicantDetail struct {
 	UserID         *int       `form:"user_id" db:"user_id" json:"userID" binding:"required"`
 	ExpectedSalary *int       `form:"expected_salary" db:"expected_salary" json:"expectedSalary" binding:"required"`
 	PrevSalary     *int       `form:"prev_salary" db:"prev_salary" json:"prevSalary"`
@@ -34,7 +34,7 @@ type CreateApplicationDetail struct {
 	CreatedBy      *time.Time `form:"created_by" db:"created_by" json:"createdBy" binding:"required"`
 }
 
-type UpdateApplicationDetail struct {
+type UpdateApplicantDetail struct {
 	UserID         *int       `form:"user_id" db:"user_id" json:"userID"`
 	ExpectedSalary *int       `form:"expected_salary" db:"expected_salary" json:"expectedSalary"`
 	PrevSalary     *int       `form:"prev_salary" db:"prev_salary" json:"prevSalary"`

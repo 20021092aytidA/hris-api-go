@@ -5,6 +5,7 @@ import (
 	"go-hrs/config/database"
 	"go-hrs/config/env"
 	"go-hrs/routes/adminroute"
+	"go-hrs/routes/applicantdetailroute"
 	"go-hrs/routes/roleroute"
 	"os"
 	"strings"
@@ -22,5 +23,6 @@ func main() {
 	app := gin.Default()
 	roleroute.InitRoute(app)
 	adminroute.InitRoute(app)
+	applicantdetailroute.InitRoute(app)
 	app.Run(fmt.Sprintf("localhost:%s", os.Getenv("API_PORT")))
 }
