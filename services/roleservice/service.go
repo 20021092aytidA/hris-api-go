@@ -11,7 +11,7 @@ func GetRoles(query string) ([]rolemodel.ViewRole, error) {
 	var roles []rolemodel.ViewRole
 	var err error = nil
 
-	err = database.DB.Table("admin").Where(qryMap).Find(&roles).Error
+	err = database.DB.Table("role").Where(qryMap).Find(&roles).Error
 	if err != nil {
 		return roles, err
 	}
