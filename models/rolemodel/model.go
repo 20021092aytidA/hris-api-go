@@ -21,7 +21,7 @@ type CreateRole struct {
 }
 
 type UpdateRole struct {
-	RoleName string    `form:"role_name" db:"role_name" json:"roleName"`
-	EditedAt time.Time `form:"edited_at" db:"edited_at" json:"editedAt" binding:"required" time_format:"2006-01-02 15:04:05"`
-	EditedBy int       `form:"edited_by" db:"edited_by" json:"editedBy" binding:"required"`
+	RoleName *string    `form:"role_name" db:"role_name" json:"roleName"`
+	EditedAt *time.Time `form:"edited_at" db:"edited_at" json:"editedAt" binding:"required" time_format:"2006-01-02 15:04:05"`
+	EditedBy *int       `form:"edited_by" db:"edited_by" json:"editedBy" binding:"required"`
 }

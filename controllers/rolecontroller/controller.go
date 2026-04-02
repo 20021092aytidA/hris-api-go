@@ -39,7 +39,7 @@ func CreateRole(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":      http.StatusBadRequest,
 			"message":     "Failed to create new role!",
-			"description": "Missing body parameter!",
+			"description": "Missing body!",
 		})
 		return
 	}
@@ -66,5 +66,53 @@ func CreateRole(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"status":  http.StatusCreated,
 		"message": "Successfully created new role!",
+	})
+}
+
+func UpdateRole(c *gin.Context) {
+	id := c.Param("id")
+	var role rolemodel.UpdateRole
+	var checkRole []rolemodel.ViewRole
+
+	if err := c.ShouldBind(&role); err != nil || id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to update role!",
+			"description": "Missing body or param!",
+		})
+		return
+	}
+
+	if role.RoleName == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to update role!",
+			"description": "Nothing to update!",
+		})
+		return
+	}
+
+	checkRole, _ = roleservice.GetRoles(fmt.Sprintf("role_name=%s", *role.RoleName))
+	if len(checkRole) != 0 {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to update role!",
+			"description": "Duplicate role name!",
+		})
+		return
+	}
+
+	if err := roleservice.UpdateRole(id, role); err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to update role!",
+			"description": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Successfully updated role!",
 	})
 }
