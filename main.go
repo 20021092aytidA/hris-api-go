@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-hrs/config/database"
 	"go-hrs/config/env"
+	"go-hrs/routes/roleroute"
 	"os"
 	"strings"
 
@@ -18,5 +19,6 @@ func main() {
 		panic(strings.ToUpper(err.Error()))
 	}
 	app := gin.Default()
+	roleroute.InitRoute(app)
 	app.Run(fmt.Sprintf("localhost:%s", os.Getenv("API_PORT")))
 }

@@ -1,0 +1,11 @@
+package roleroute
+
+import (
+	"go-hrs/controllers/rolecontroller"
+
+	"github.com/gin-gonic/gin"
+)
+
+func InitRoute(c *gin.Engine) {
+	c.GET("/hrs-api/roles", rolecontroller.GetRoles)
+}
