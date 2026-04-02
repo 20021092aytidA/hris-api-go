@@ -33,7 +33,7 @@ type CreateUser struct {
 	Position          *string    `form:"position" db:"position" json:"position" binding:"required"`
 	DateOfBirth       *string    `form:"date_of_birth" db:"date_of_birth" json:"dateOfBirth" binding:"required"`
 	JoinDate          *string    `form:"join_date" db:"join_date" json:"joinDate" binding:"required"`
-	Salary            *int       `form:"salary" db:"salary" json:"salary" binding:"required"`
+	Salary            *int       `form:"salary" db:"salary" json:"salary"`
 	LeaveAmount       *int       `form:"leave_amount" db:"leave_amount" json:"leaveAmount"`
 	Picture           *string    `form:"picture" db:"picture" json:"picture"`
 	Resume            *string    `form:"resume" db:"resume" json:"resume"`
