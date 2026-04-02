@@ -5,6 +5,7 @@ import (
 	"go-hrs/config/database"
 	"go-hrs/helpers/requesthelper"
 	"go-hrs/models/rolemodel"
+	"time"
 )
 
 func GetRoles(query string) ([]rolemodel.ViewRole, error) {
@@ -29,18 +30,40 @@ func CreateRole(role rolemodel.CreateRole) error {
 	return nil
 }
 
-func UpdateRole(adminID string, role rolemodel.UpdateRole) error {
+func UpdateRole(roleID string, role rolemodel.UpdateRole) error {
 	var whereMap = make(map[string]string)
-	whereMap["role_id"] = adminID
+	whereMap["role_id"] = roleID
 	whereMap["is_deleted"] = "0"
 
-	post := database.DB.Table("role").Where(whereMap).Updates(role)
-	if post.Error != nil {
-		return post.Error
+	put := database.DB.Table("role").Where(whereMap).Updates(role)
+	if put.Error != nil {
+		return put.Error
 	}
 
-	if post.RowsAffected == 0 {
-		return errors.New("No admin was found!")
+	if put.RowsAffected == 0 {
+		return errors.New("No role was updated!")
+	}
+
+	return nil
+}
+
+func DeleteRole(roleID string, deletedBy string) error {
+	var whereMap = make(map[string]string)
+	whereMap["role_id"] = roleID
+	whereMap["is_deleted"] = "0"
+
+	var deleteMap = make(map[string]any)
+	deleteMap["deleted_by"] = deletedBy
+	deleteMap["deleted_at"] = time.Now()
+	deleteMap["is_deleted"] = "1"
+
+	delete := database.DB.Table("role").Where(whereMap).Updates(deleteMap)
+	if delete.Error != nil {
+		return delete.Error
+	}
+
+	if delete.RowsAffected == 0 {
+		return errors.New("No role was deleted!")
 	}
 
 	return nil

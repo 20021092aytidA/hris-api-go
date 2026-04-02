@@ -116,3 +116,31 @@ func UpdateRole(c *gin.Context) {
 		"message": "Successfully updated role!",
 	})
 }
+
+func DeleteRole(c *gin.Context) {
+	id := c.Param("id")
+	deletedBy := c.Query("deleted_by")
+
+	if id == "" || deletedBy == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to delete role!",
+			"description": "Missing param or query!",
+		})
+		return
+	}
+
+	if err := roleservice.DeleteRole(id, deletedBy); err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to delete role!",
+			"description": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Successfully deleted role!",
+	})
+}
