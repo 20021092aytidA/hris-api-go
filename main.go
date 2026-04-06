@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-hrs/config/database"
 	"go-hrs/config/env"
+	"go-hrs/middleware/cors"
 	"go-hrs/routes/adminroute"
 	"go-hrs/routes/applicantdetailroute"
 	"go-hrs/routes/roleroute"
@@ -22,6 +23,7 @@ func main() {
 		panic(strings.ToUpper(err.Error()))
 	}
 	app := gin.Default()
+	app.Use(cors.CORSMiddleware())
 
 	// ROUTES
 	roleroute.InitRoute(app)
