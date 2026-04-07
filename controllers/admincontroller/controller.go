@@ -14,6 +14,11 @@ import (
 )
 
 func GetAdmins(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "role")
+	if !isValidJWT {
+		return
+	}
+
 	var admins []adminmodel.ViewAdmin
 	var err error = nil
 	query := c.Request.URL.RawQuery
@@ -103,6 +108,113 @@ func CreateAdmin(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"status":  http.StatusCreated,
 		"message": "Successfully created new admin!",
+	})
+}
+
+func UpdateAdmin(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "admin")
+	if !isValidJWT {
+		return
+	}
+
+	adminID := c.Param("id")
+	var update adminmodel.UpdateAdmin
+
+	if err := c.ShouldBind(&update); err != nil || adminID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to update admin!",
+			"description": "Missing body or param!",
+		})
+		return
+	}
+
+	//CHECK IF EXIST
+	admin, _ := adminservice.GetAdmins(fmt.Sprintf("admin_id=%s", adminID))
+	if len(admin) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":      http.StatusNotFound,
+			"message":     "Failed to update admin!",
+			"description": "Admin not found!",
+		})
+		return
+	}
+
+	//CHECK AVAILABLE USER
+	if update.UserID != nil {
+		user, _ := userservice.GetUsers(fmt.Sprintf("user_id=%v", *update.UserID))
+		if len(user) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":      http.StatusNotFound,
+				"message":     "Failed to update admin!",
+				"description": "User not found!",
+			})
+			return
+		}
+	}
+
+	//CHECK AVAILABLE ROLE
+	if update.RoleID != nil {
+		role, _ := roleservice.GetRoles(fmt.Sprintf("role_id=%v", *update.RoleID))
+		if len(role) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":      http.StatusNotFound,
+				"message":     "Failed to update admin!",
+				"description": "Role not found!",
+			})
+			return
+		}
+	}
+
+	//DUPLICATE USERNAME
+	if update.Username != nil {
+		admins, _ := adminservice.GetAdmins(fmt.Sprintf("username=%s", *update.Username))
+		if len(admins) != 0 {
+			c.JSON(http.StatusConflict, gin.H{
+				"status":      http.StatusConflict,
+				"message":     "Failed to update admin!",
+				"description": "Duplicate username!",
+			})
+			return
+		}
+	}
+
+	if update.Password != nil {
+		admins, _ := adminservice.GetAdmins(fmt.Sprintf("username=%s", *update.Username))
+		if err := bcrypt.CompareHashAndPassword([]byte(*admins[0].Password), []byte(*update.Password)); err != nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"status":      http.StatusConflict,
+				"message":     "Failed to update admin!",
+				"description": "Wrong password!",
+			})
+			return
+		}
+
+		encryptedPass, bcryptErr := bcrypt.GenerateFromPassword([]byte(*update.Password), bcrypt.DefaultCost)
+		if bcryptErr != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status":      http.StatusInternalServerError,
+				"message":     "Failed to encrypt password!",
+				"description": bcryptErr.Error(),
+			})
+			return
+		}
+		var encryptPassString string = string(encryptedPass)
+		update.Password = &encryptPassString
+	}
+
+	if errUpdate := adminservice.UpdateAdmin(adminID, update); errUpdate != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":      http.StatusInternalServerError,
+			"message":     "Failed to update admin!",
+			"description": errUpdate.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Successfully updated admin!",
 	})
 }
 

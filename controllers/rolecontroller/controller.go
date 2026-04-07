@@ -11,29 +11,13 @@ import (
 )
 
 func GetRoles(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "role")
+	if !isValidJWT {
+		return
+	}
+
 	var roles []rolemodel.ViewRole
 	var err error = nil
-	var bearerToken string = jwthelper.GetBearerToken(c.GetHeader("Authorization"))
-
-	if bearerToken == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":      http.StatusBadRequest,
-			"message":     "Failed to retrieve roles!",
-			"description": "Missing token!",
-		})
-		return
-	}
-
-	verifyTokenErr := jwthelper.VerifyToken(bearerToken)
-	if verifyTokenErr != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"status":      http.StatusUnauthorized,
-			"message":     "Failed to retrieve roles!",
-			"description": "Invalid token!",
-		})
-		return
-	}
-
 	query := c.Request.URL.RawQuery
 
 	roles, err = roleservice.GetRoles(query)
@@ -54,6 +38,11 @@ func GetRoles(c *gin.Context) {
 }
 
 func CreateRole(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "role")
+	if !isValidJWT {
+		return
+	}
+
 	var role rolemodel.CreateRole
 	var checkRole []rolemodel.ViewRole
 
@@ -92,6 +81,11 @@ func CreateRole(c *gin.Context) {
 }
 
 func UpdateRole(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "role")
+	if !isValidJWT {
+		return
+	}
+
 	id := c.Param("id")
 	var role rolemodel.UpdateRole
 	var checkRole []rolemodel.ViewRole
@@ -140,6 +134,11 @@ func UpdateRole(c *gin.Context) {
 }
 
 func DeleteRole(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "role")
+	if !isValidJWT {
+		return
+	}
+
 	id := c.Param("id")
 	deletedBy := c.Query("deleted_by")
 
