@@ -37,7 +37,7 @@ func LoginAdmin(c *gin.Context) {
 	var login adminmodel.LoginAdmin
 
 	//NO BODY
-	if err := c.ShouldBind(&login).Error; err != nil {
+	if err := c.ShouldBind(&login); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":      http.StatusBadRequest,
 			"message":     "Failed to login!",
