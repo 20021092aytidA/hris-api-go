@@ -8,4 +8,6 @@ import (
 
 func InitRoute(c *gin.Engine) {
 	c.GET("/hrs-api/admins", admincontroller.GetAdmins)
+	c.POST("/hrs-api/admin", admincontroller.CreateAdmin)
+	c.POST("/hrs-api/admin/login", admincontroller.LoginAdmin)
 }

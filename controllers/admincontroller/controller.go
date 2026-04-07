@@ -5,6 +5,8 @@ import (
 	"go-hrs/helpers/jwthelper"
 	"go-hrs/models/adminmodel"
 	"go-hrs/services/adminservice"
+	"go-hrs/services/roleservice"
+	"go-hrs/services/userservice"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,6 +32,77 @@ func GetAdmins(c *gin.Context) {
 		"status":  http.StatusOK,
 		"message": "Successfully retrieve admins!",
 		"data":    admins,
+	})
+}
+
+func CreateAdmin(c *gin.Context) {
+	var create adminmodel.CreateAdmin
+	if err := c.ShouldBind(&create); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to create new admin!",
+			"description": "Missing body!",
+		})
+		return
+	}
+
+	//CHECK AVAILABLE USER
+	user, _ := userservice.GetUsers(fmt.Sprintf("user_id=%v", *create.UserID))
+	if len(user) == 0 {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to create new admin!",
+			"description": "User not found!",
+		})
+		return
+	}
+
+	//CHECK AVAILABLE ROLE
+	role, _ := roleservice.GetRoles(fmt.Sprintf("role_id=%v", *create.RoleID))
+	if len(role) == 0 {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to create new admin!",
+			"description": "Role not found!",
+		})
+		return
+	}
+
+	//DUPLICATE USERNAME
+	admins, _ := adminservice.GetAdmins(fmt.Sprintf("username=%s", *create.Username))
+	if len(admins) != 0 {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to create new admin!",
+			"description": "Duplicate username!",
+		})
+		return
+	}
+
+	encryptPass, errBcrypt := bcrypt.GenerateFromPassword([]byte(*create.Password), bcrypt.DefaultCost)
+	if errBcrypt != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to encrpyt password!",
+			"description": errBcrypt.Error(),
+		})
+		return
+	}
+	stringEncryptPass := string(encryptPass)
+	create.Password = &stringEncryptPass
+
+	if err := adminservice.CreateAdmin(create); err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to create new admin!",
+			"description": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status":  http.StatusCreated,
+		"message": "Successfully created new admin!",
 	})
 }
 

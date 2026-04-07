@@ -18,3 +18,12 @@ func GetAdmins(query string) ([]adminmodel.ViewAdmin, error) {
 
 	return admins, nil
 }
+
+func CreateAdmin(admin adminmodel.CreateAdmin) error {
+	post := database.DB.Table("admin").Create(admin)
+	if post.Error != nil {
+		return post.Error
+	}
+
+	return nil
+}
