@@ -14,6 +14,8 @@ type structENV struct {
 	DBPass string
 
 	APIPort string
+
+	JWTKey string
 }
 
 var ENV structENV
@@ -29,6 +31,7 @@ func LoadENV() error {
 	ENV.DBUser = os.Getenv("DB_USER")
 	ENV.DBPass = os.Getenv("DB_PASS")
 	ENV.APIPort = os.Getenv("API_PORT")
+	ENV.JWTKey = os.Getenv("JWT_KEY")
 
 	return nil
 }
