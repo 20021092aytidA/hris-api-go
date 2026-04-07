@@ -47,7 +47,7 @@ func LoginAdmin(c *gin.Context) {
 	}
 
 	//NOT FOUND
-	admin, _ := adminservice.GetAdmins(fmt.Sprintf("username=%s", login.Username))
+	admin, _ := adminservice.GetAdmins(fmt.Sprintf("username=%s", *login.Username))
 	if len(admin) == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "Failed to login!", "description": "No user found!"})
 		return
