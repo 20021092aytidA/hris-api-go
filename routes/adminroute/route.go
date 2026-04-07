@@ -11,4 +11,5 @@ func InitRoute(c *gin.Engine) {
 	c.POST("/hrs-api/admin", admincontroller.CreateAdmin)
 	c.POST("/hrs-api/admin/login", admincontroller.LoginAdmin)
 	c.PUT("/hrs-api/admin/:id", admincontroller.UpdateAdmin)
+	c.DELETE("/hrs-api/admin/:id", admincontroller.DeleteAdmin)
 }

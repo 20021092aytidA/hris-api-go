@@ -218,6 +218,48 @@ func UpdateAdmin(c *gin.Context) {
 	})
 }
 
+func DeleteAdmin(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "admin")
+	if !isValidJWT {
+		return
+	}
+
+	adminID := c.Param("id")
+	deletedBy := c.Query("deleted_by")
+	if adminID == "" || deletedBy == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to delete admin!",
+			"description": "Missing param or query!",
+		})
+		return
+	}
+
+	admin, _ := adminservice.GetAdmins(fmt.Sprintf("admin_id=%s", adminID))
+	if len(admin) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":      http.StatusNotFound,
+			"message":     "Failed to delete admin!",
+			"description": "No admin found!",
+		})
+		return
+	}
+
+	if errDel := adminservice.DeleteAdmin(adminID, deletedBy); errDel != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":      http.StatusInternalServerError,
+			"message":     "Failed to delete admin!",
+			"description": errDel.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Successfully deleted admin!",
+	})
+}
+
 func LoginAdmin(c *gin.Context) {
 	var login adminmodel.LoginAdmin
 

@@ -5,6 +5,7 @@ import (
 	"go-hrs/config/database"
 	"go-hrs/helpers/requesthelper"
 	"go-hrs/models/adminmodel"
+	"time"
 )
 
 func GetAdmins(query string) ([]adminmodel.ViewAdmin, error) {
@@ -40,6 +41,28 @@ func UpdateAdmin(adminID string, adminUpdates adminmodel.UpdateAdmin) error {
 
 	if put.RowsAffected == 0 {
 		return errors.New("No admin was updated!")
+	}
+
+	return nil
+}
+
+func DeleteAdmin(adminID string, deletedBy string) error {
+	var whereMap = make(map[string]any)
+	whereMap["admin_id"] = adminID
+	whereMap["is_deleted"] = "0"
+
+	var deleteMap = make(map[string]any)
+	deleteMap["is_deleted"] = "1"
+	deleteMap["deleted_at"] = time.Now()
+	deleteMap["deleted_by"] = deletedBy
+
+	delete := database.DB.Table("admin").Where(whereMap).Updates(deleteMap)
+	if delete.Error != nil {
+		return delete.Error
+	}
+
+	if delete.RowsAffected == 0 {
+		return errors.New("No admin was deleted!")
 	}
 
 	return nil
