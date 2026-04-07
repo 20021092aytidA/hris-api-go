@@ -26,6 +26,11 @@ type CreateAdmin struct {
 	CreatedBy *int       `form:"created_by" db:"created_by" json:"createdBy" binding:"required"`
 }
 
+type LoginAdmin struct {
+	Username *string `form:"username" db:"username" json:"username" binding:"required"`
+	Password *string `form:"password" db:"password" json:"password" binding:"required"`
+}
+
 type UpdateAdmin struct {
 	UserID   *int       `form:"user_id" db:"user_id" json:"userID"`
 	RoleID   *int       `form:"role_id" db:"role_id" json:"roleID"`

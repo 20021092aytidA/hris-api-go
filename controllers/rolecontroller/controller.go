@@ -2,6 +2,7 @@ package rolecontroller
 
 import (
 	"fmt"
+	"go-hrs/helpers/jwthelper"
 	"go-hrs/models/rolemodel"
 	"go-hrs/services/roleservice"
 	"net/http"
@@ -12,6 +13,27 @@ import (
 func GetRoles(c *gin.Context) {
 	var roles []rolemodel.ViewRole
 	var err error = nil
+	var bearerToken string = jwthelper.GetBearerToken(c.GetHeader("Authorization"))
+
+	if bearerToken == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to retrieve roles!",
+			"description": "Missing token!",
+		})
+		return
+	}
+
+	verifyTokenErr := jwthelper.VerifyToken(bearerToken)
+	if verifyTokenErr != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status":      http.StatusUnauthorized,
+			"message":     "Failed to retrieve roles!",
+			"description": "Invalid token!",
+		})
+		return
+	}
+
 	query := c.Request.URL.RawQuery
 
 	roles, err = roleservice.GetRoles(query)
