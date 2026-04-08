@@ -18,3 +18,13 @@ func GetUsers(query string) ([]usermodel.ViewUser, error) {
 
 	return users, nil
 }
+
+func CreateUser(user usermodel.CreateUser) error {
+	create := database.DB.Table("user").Create(user)
+
+	if create.Error != nil {
+		return create.Error
+	}
+
+	return nil
+}

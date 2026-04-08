@@ -8,4 +8,5 @@ import (
 
 func InitRoute(c *gin.Engine) {
 	c.GET("/hrs-api/users", usercontroller.GetUsers)
+	c.POST("/hrs-api/user", usercontroller.CreateUser)
 }
