@@ -18,3 +18,13 @@ func GetApplicantDetails(query string) ([]applicantdetailmodel.ViewApplicantDeta
 
 	return applicantDetails, nil
 }
+
+func CreateApplicantDetail(applicantDetail applicantdetailmodel.CreateApplicantDetail) error {
+	create := database.DB.Table("applicant_detail").Create(applicantDetail)
+
+	if create.Error != nil {
+		return create.Error
+	}
+
+	return nil
+}

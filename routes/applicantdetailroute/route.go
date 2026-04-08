@@ -8,4 +8,5 @@ import (
 
 func InitRoute(c *gin.Engine) {
 	c.GET("/hrs-api/applicant-details", applicantdetailcontroller.GetApplicantDetails)
+	c.POST("/hrs-api/applicant-detail", applicantdetailcontroller.CreateApplicantDetail)
 }
