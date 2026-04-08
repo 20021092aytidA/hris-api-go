@@ -2,6 +2,7 @@ package usercontroller
 
 import (
 	"fmt"
+	"go-hrs/helpers/jwthelper"
 	"go-hrs/models/usermodel"
 	"go-hrs/services/roleservice"
 	"go-hrs/services/userservice"
@@ -11,6 +12,11 @@ import (
 )
 
 func GetUsers(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	if !isValidJWT {
+		return
+	}
+
 	var users []usermodel.ViewUser
 	var err error = nil
 	query := c.Request.URL.RawQuery
@@ -33,6 +39,11 @@ func GetUsers(c *gin.Context) {
 }
 
 func CreateUser(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	if !isValidJWT {
+		return
+	}
+
 	var user usermodel.CreateUser
 	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
