@@ -1,6 +1,7 @@
 package userservice
 
 import (
+	"errors"
 	"go-hrs/config/database"
 	"go-hrs/helpers/requesthelper"
 	"go-hrs/models/usermodel"
@@ -24,6 +25,23 @@ func CreateUser(user usermodel.CreateUser) error {
 
 	if create.Error != nil {
 		return create.Error
+	}
+
+	return nil
+}
+
+func UpdateUser(userID string, user usermodel.UpdateUser) error {
+	var whereMap = make(map[string]any)
+	whereMap["user_id"] = userID
+	whereMap["is_deleted"] = "0"
+
+	update := database.DB.Table("user").Where(whereMap).Updates(user)
+	if update.Error != nil {
+		return update.Error
+	}
+
+	if update.RowsAffected == 0 {
+		return errors.New("No user was updated!")
 	}
 
 	return nil

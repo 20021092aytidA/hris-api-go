@@ -79,3 +79,61 @@ func CreateUser(c *gin.Context) {
 		"message": "Successfully created new user!",
 	})
 }
+
+func UpdateUser(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	if !isValidJWT {
+		return
+	}
+
+	id := c.Param("id")
+	var user usermodel.UpdateUser
+
+	if err := c.ShouldBind(&user); err != nil || id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to update user!",
+			"description": "Missing body or param!",
+		})
+		return
+	}
+
+	//EXIST
+	existUser, _ := userservice.GetUsers(fmt.Sprintf("user_id=%v", id))
+	if len(existUser) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":      http.StatusNotFound,
+			"message":     "Failed to update user!",
+			"description": "User not found!",
+		})
+		return
+	}
+
+	//ROLE
+	if user.RoleID != nil {
+		role, _ := roleservice.GetRoles(fmt.Sprintf("role_id=%v", *user.RoleID))
+		if len(role) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":      http.StatusNotFound,
+				"message":     "Failed to update user!",
+				"description": "Role not found!",
+			})
+			return
+		}
+	}
+
+	if err := userservice.UpdateUser(id, user); err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to update user!",
+			"description": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Successfully updated user!",
+	})
+
+}
