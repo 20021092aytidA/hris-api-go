@@ -1,6 +1,7 @@
 package applicantdetailservice
 
 import (
+	"errors"
 	"go-hrs/config/database"
 	"go-hrs/helpers/requesthelper"
 	"go-hrs/models/applicantdetailmodel"
@@ -24,6 +25,23 @@ func CreateApplicantDetail(applicantDetail applicantdetailmodel.CreateApplicantD
 
 	if create.Error != nil {
 		return create.Error
+	}
+
+	return nil
+}
+
+func UpdateApplicantDetail(applicantDetailID string, applicantDetail applicantdetailmodel.UpdateApplicantDetail) error {
+	var whereMap = make(map[string]any)
+	whereMap["applicant_detail_id"] = applicantDetailID
+	whereMap["is_deleted"] = "0"
+
+	update := database.DB.Table("applicant_detail").Where(whereMap).Updates(applicantDetail)
+	if update.Error != nil {
+		return update.Error
+	}
+
+	if update.RowsAffected == 0 {
+		return errors.New("No applicant detail was updated!")
 	}
 
 	return nil

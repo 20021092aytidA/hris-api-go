@@ -80,3 +80,59 @@ func CreateApplicantDetail(c *gin.Context) {
 		"message": "Successfully created new applicant detail!",
 	})
 }
+
+func UpdateApplicantDetail(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	if !isValidJWT {
+		return
+	}
+
+	id := c.Param("id")
+	var applicantDetail applicantdetailmodel.UpdateApplicantDetail
+
+	if err := c.ShouldBind(&applicantDetail); err != nil || id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to update applicant detail!",
+			"description": "Missing body or param!",
+		})
+	}
+
+	//EXIST
+	existAppDet, _ := applicantdetailservice.GetApplicantDetails(fmt.Sprintf("applicant_detail_id=%v", id))
+	if len(existAppDet) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":      http.StatusNotFound,
+			"message":     "Failed to update applicant detial!",
+			"description": "Applicatn detail not found!",
+		})
+		return
+	}
+
+	//USER
+	if applicantDetail.UserID != nil {
+		user, _ := userservice.GetUsers(fmt.Sprintf("user_id=%v", *applicantDetail.UserID))
+		if len(user) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":      http.StatusNotFound,
+				"message":     "Failed to update applicant detial!",
+				"description": "User not found!",
+			})
+			return
+		}
+	}
+
+	if err := applicantdetailservice.UpdateApplicantDetail(id, applicantDetail); err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to update applicant detail!",
+			"description": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Successfully updated applicant detail!",
+	})
+}
