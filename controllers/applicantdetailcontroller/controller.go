@@ -12,7 +12,7 @@ import (
 )
 
 func GetApplicantDetails(c *gin.Context) {
-	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "applicant detail")
 	if !isValidJWT {
 		return
 	}
@@ -39,7 +39,7 @@ func GetApplicantDetails(c *gin.Context) {
 }
 
 func CreateApplicantDetail(c *gin.Context) {
-	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "applicant detail")
 	if !isValidJWT {
 		return
 	}
@@ -82,7 +82,7 @@ func CreateApplicantDetail(c *gin.Context) {
 }
 
 func UpdateApplicantDetail(c *gin.Context) {
-	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "applicant detail")
 	if !isValidJWT {
 		return
 	}
@@ -135,4 +135,47 @@ func UpdateApplicantDetail(c *gin.Context) {
 		"status":  http.StatusOK,
 		"message": "Successfully updated applicant detail!",
 	})
+}
+
+func DeleteApplicantDetail(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "applicant detail")
+	if !isValidJWT {
+		return
+	}
+
+	applicantDetailID := c.Param("id")
+	deletedBy := c.Query("deleted_by")
+	if applicantDetailID == "" || deletedBy == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to delete applicant detail!",
+			"description": "Missing param or query!",
+		})
+		return
+	}
+
+	applicantDetail, _ := applicantdetailservice.GetApplicantDetails(fmt.Sprintf("applicant_detail_id=%s", applicantDetailID))
+	if len(applicantDetail) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":      http.StatusNotFound,
+			"message":     "Failed to delete applicant detail!",
+			"description": "No applicant detail found!",
+		})
+		return
+	}
+
+	if errDel := applicantdetailservice.DeleteApplicantDetail(applicantDetailID, deletedBy); errDel != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to delete applicant detail!",
+			"description": errDel.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Successfully deleted applicant detail!",
+	})
+
 }

@@ -246,8 +246,8 @@ func DeleteAdmin(c *gin.Context) {
 	}
 
 	if errDel := adminservice.DeleteAdmin(adminID, deletedBy); errDel != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":      http.StatusInternalServerError,
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
 			"message":     "Failed to delete admin!",
 			"description": errDel.Error(),
 		})
