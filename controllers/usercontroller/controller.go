@@ -137,3 +137,47 @@ func UpdateUser(c *gin.Context) {
 	})
 
 }
+
+func DeleteUser(c *gin.Context) {
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	if !isValidJWT {
+		return
+	}
+
+	deletedBy := c.Query("deleted_by")
+	id := c.Param("id")
+
+	if id == "" || deletedBy == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":      http.StatusBadRequest,
+			"message":     "Failed to delete user!",
+			"description": "Missing param or query!",
+		})
+		return
+	}
+
+	//EXIST
+	user, _ := userservice.GetUsers(fmt.Sprintf("user_id=%v", id))
+	if len(user) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":      http.StatusNotFound,
+			"message":     "Failed to delete user!",
+			"description": "User not found!",
+		})
+	}
+
+	if err := userservice.DeleteUser(id, deletedBy); err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"status":      http.StatusConflict,
+			"message":     "Failed to delete user!",
+			"description": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Successfully deleted user!",
+	})
+
+}

@@ -5,6 +5,7 @@ import (
 	"go-hrs/config/database"
 	"go-hrs/helpers/requesthelper"
 	"go-hrs/models/usermodel"
+	"time"
 )
 
 func GetUsers(query string) ([]usermodel.ViewUser, error) {
@@ -42,6 +43,27 @@ func UpdateUser(userID string, user usermodel.UpdateUser) error {
 
 	if update.RowsAffected == 0 {
 		return errors.New("No user was updated!")
+	}
+
+	return nil
+}
+
+func DeleteUser(userID string, deletedBy string) error {
+	var whereMap = make(map[string]any)
+	whereMap["is_deleted"] = "0"
+	whereMap["user_id"] = userID
+	var deleteMap = make(map[string]any)
+	deleteMap["deleted_by"] = deletedBy
+	deleteMap["deleted_at"] = time.Now()
+	deleteMap["is_deleted"] = "1"
+
+	delete := database.DB.Table("user").Where(whereMap).Updates(deleteMap)
+	if delete.Error != nil {
+		return delete.Error
+	}
+
+	if delete.RowsAffected == 0 {
+		return errors.New("No user was deleted!")
 	}
 
 	return nil
