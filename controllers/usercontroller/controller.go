@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-hrs/helpers/jwthelper"
 	"go-hrs/models/usermodel"
+	"go-hrs/services/applicantdetailservice"
 	"go-hrs/services/roleservice"
 	"go-hrs/services/userservice"
 	"net/http"
@@ -12,10 +13,10 @@ import (
 )
 
 func GetUsers(c *gin.Context) {
-	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
-	if !isValidJWT {
-		return
-	}
+	// isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	// if !isValidJWT {
+	// 	return
+	// }
 
 	var users []usermodel.ViewUser
 	var err error = nil
@@ -65,6 +66,19 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	//APPLICANT DETAIL
+	if user.ApplicantDetailID != nil {
+		appDet, _ := applicantdetailservice.GetApplicantDetails(fmt.Sprintf("applicant_detail_id=%v", *user.ApplicantDetailID))
+		if len(appDet) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":      http.StatusNotFound,
+				"message":     "Failed to create new user!",
+				"description": "Applciant detail not found!",
+			})
+			return
+		}
+	}
+
 	if err := userservice.CreateUser(user); err != nil {
 		c.JSON(http.StatusConflict, gin.H{
 			"status":      http.StatusConflict,
@@ -81,10 +95,10 @@ func CreateUser(c *gin.Context) {
 }
 
 func UpdateUser(c *gin.Context) {
-	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
-	if !isValidJWT {
-		return
-	}
+	// isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	// if !isValidJWT {
+	// 	return
+	// }
 
 	id := c.Param("id")
 	var user usermodel.UpdateUser
@@ -117,6 +131,19 @@ func UpdateUser(c *gin.Context) {
 				"status":      http.StatusNotFound,
 				"message":     "Failed to update user!",
 				"description": "Role not found!",
+			})
+			return
+		}
+	}
+
+	//APPLICANT DETAIL
+	if user.ApplicantDetailID != nil {
+		appDet, _ := applicantdetailservice.GetApplicantDetails(fmt.Sprintf("applicant_detail_id=%v", *user.ApplicantDetailID))
+		if len(appDet) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{
+				"status":      http.StatusNotFound,
+				"message":     "Failed to update user!",
+				"description": "Applciant detail not found!",
 			})
 			return
 		}

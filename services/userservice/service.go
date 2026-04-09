@@ -13,7 +13,7 @@ func GetUsers(query string) ([]usermodel.ViewUser, error) {
 	var users []usermodel.ViewUser
 	var err error = nil
 
-	err = database.DB.Table("user").Preload("Role").Where(qryMap).Find(&users).Error
+	err = database.DB.Table("user").Preload("Role").Preload("ApplicantDetail").Where(qryMap).Find(&users).Error
 	if err != nil {
 		return users, err
 	}

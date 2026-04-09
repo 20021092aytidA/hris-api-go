@@ -5,7 +5,6 @@ import (
 	"go-hrs/helpers/jwthelper"
 	"go-hrs/models/applicantdetailmodel"
 	"go-hrs/services/applicantdetailservice"
-	"go-hrs/services/userservice"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -39,10 +38,10 @@ func GetApplicantDetails(c *gin.Context) {
 }
 
 func CreateApplicantDetail(c *gin.Context) {
-	isValidJWT := jwthelper.CheckAndValidateToken(c, "applicant detail")
-	if !isValidJWT {
-		return
-	}
+	// isValidJWT := jwthelper.CheckAndValidateToken(c, "applicant detail")
+	// if !isValidJWT {
+	// 	return
+	// }
 
 	var applicantDetail applicantdetailmodel.CreateApplicantDetail
 
@@ -51,17 +50,6 @@ func CreateApplicantDetail(c *gin.Context) {
 			"status":      http.StatusBadRequest,
 			"message":     "Failed to create new applicant detail!",
 			"description": "Missing body!",
-		})
-		return
-	}
-
-	//USER
-	user, _ := userservice.GetUsers(fmt.Sprintf("user_id=%v", *applicantDetail.UserID))
-	if len(user) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status":      http.StatusNotFound,
-			"message":     "Failed to create new applicant detail!",
-			"description": "User not found!",
 		})
 		return
 	}
@@ -107,19 +95,6 @@ func UpdateApplicantDetail(c *gin.Context) {
 			"description": "Applicatn detail not found!",
 		})
 		return
-	}
-
-	//USER
-	if applicantDetail.UserID != nil {
-		user, _ := userservice.GetUsers(fmt.Sprintf("user_id=%v", *applicantDetail.UserID))
-		if len(user) == 0 {
-			c.JSON(http.StatusNotFound, gin.H{
-				"status":      http.StatusNotFound,
-				"message":     "Failed to update applicant detial!",
-				"description": "User not found!",
-			})
-			return
-		}
 	}
 
 	if err := applicantdetailservice.UpdateApplicantDetail(id, applicantDetail); err != nil {

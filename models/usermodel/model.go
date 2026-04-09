@@ -1,6 +1,7 @@
 package usermodel
 
 import (
+	"go-hrs/models/applicantdetailmodel"
 	"go-hrs/models/rolemodel"
 	"time"
 )
@@ -8,6 +9,7 @@ import (
 type ViewUser struct {
 	UserID            *int       `db:"user_id" json:"userID" gorm:"primarykey"`
 	RoleID            *int       `db:"role_id" json:"roleID"`
+	ApplicantDetailID *int       `db:"applicant_detail_id" json:"applicantDetailID"`
 	FullName          *string    `db:"full_name" json:"fullName"`
 	Address           *string    `db:"address" json:"address"`
 	Position          *string    `db:"position" json:"position"`
@@ -28,10 +30,12 @@ type ViewUser struct {
 	DeletedBy         *int       `db:"deleted_by" json:"deletedBy"`
 	IsDeleted         *string    `db:"is_deleted" json:"isDeleted"`
 
-	Role *rolemodel.ViewRole `db:"role" json:"roleDetail" gorm:"foreignKey:RoleID"`
+	Role            *rolemodel.ViewRole                       `db:"role" json:"roleDetail" gorm:"foreignKey:RoleID;references:RoleID"`
+	ApplicantDetail *applicantdetailmodel.ViewApplicantDetail `db:"applicant_detail" json:"applicantDetail" gorm:"foreignKey:ApplicantDetailID;references:ApplicantDetailID"`
 }
 
 type CreateUser struct {
+	ApplicantDetailID *int       `form:"applicant_detail_id" db:"applicant_detail_id" json:"applicantDetailID"`
 	RoleID            *int       `form:"role_id" db:"role_id" json:"roleID" binding:"required"`
 	FullName          *string    `form:"full_name" db:"full_name" json:"fullName" binding:"required"`
 	Address           *string    `form:"address" db:"address" json:"address" binding:"required"`
@@ -50,6 +54,7 @@ type CreateUser struct {
 }
 
 type UpdateUser struct {
+	ApplicantDetailID *int       `form:"applicant_detail_id" db:"applicant_detail_id" json:"applicantDetailID"`
 	RoleID            *int       `form:"role_id" db:"role_id" json:"roleID"`
 	FullName          *string    `form:"full_name" db:"full_name" json:"fullName"`
 	Address           *string    `form:"address" db:"address" json:"address"`

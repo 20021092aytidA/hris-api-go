@@ -2,9 +2,12 @@ package applicantdetailmodel
 
 import "time"
 
+func (ViewApplicantDetail) TableName() string {
+	return "applicant_detail"
+}
+
 type ViewApplicantDetail struct {
-	ApplicantDetailID *int       `db:"applicant_detail_id" json:"applicantDetailID"`
-	UserID            *int       `db:"user_id" json:"userID"`
+	ApplicantDetailID *int       `db:"applicant_detail_id" json:"applicantDetailID" gorm:"primarykey"`
 	ExpectedSalary    *int       `db:"expected_salary" json:"expectedSalary"`
 	PrevSalary        *int       `db:"prev_salary" json:"prevSalary"`
 	PrevPosition      *string    `db:"prev_position" json:"prevPosition"`
@@ -22,7 +25,6 @@ type ViewApplicantDetail struct {
 }
 
 type CreateApplicantDetail struct {
-	UserID         *int       `form:"user_id" db:"user_id" json:"userID" binding:"required"`
 	ExpectedSalary *int       `form:"expected_salary" db:"expected_salary" json:"expectedSalary" binding:"required"`
 	PrevSalary     *int       `form:"prev_salary" db:"prev_salary" json:"prevSalary"`
 	PrevPosition   *string    `form:"prev_position" db:"prev_position" json:"prevPosition"`
@@ -35,7 +37,6 @@ type CreateApplicantDetail struct {
 }
 
 type UpdateApplicantDetail struct {
-	UserID         *int       `form:"user_id" db:"user_id" json:"userID"`
 	ExpectedSalary *int       `form:"expected_salary" db:"expected_salary" json:"expectedSalary"`
 	PrevSalary     *int       `form:"prev_salary" db:"prev_salary" json:"prevSalary"`
 	PrevPosition   *string    `form:"prev_position" db:"prev_position" json:"prevPosition"`
