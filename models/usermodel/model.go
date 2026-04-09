@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+func (ViewUser) TableName() string {
+	return "user"
+}
+
 type ViewUser struct {
 	UserID            *int       `db:"user_id" json:"userID" gorm:"primarykey"`
 	RoleID            *int       `db:"role_id" json:"roleID"`
@@ -30,8 +34,8 @@ type ViewUser struct {
 	DeletedBy         *int       `db:"deleted_by" json:"deletedBy"`
 	IsDeleted         *string    `db:"is_deleted" json:"isDeleted"`
 
-	Role            *rolemodel.ViewRole                       `db:"role" json:"roleDetail" gorm:"foreignKey:RoleID;references:RoleID"`
-	ApplicantDetail *applicantdetailmodel.ViewApplicantDetail `db:"applicant_detail" json:"applicantDetail" gorm:"foreignKey:ApplicantDetailID;references:ApplicantDetailID"`
+	Role            *rolemodel.ViewRole                       `db:"role" json:"roleDetail,omitempty" gorm:"foreignKey:RoleID;references:RoleID"`
+	ApplicantDetail *applicantdetailmodel.ViewApplicantDetail `db:"applicant_detail" json:"applicantDetail,omitempty" gorm:"foreignKey:ApplicantDetailID;references:ApplicantDetailID"`
 }
 
 type CreateUser struct {

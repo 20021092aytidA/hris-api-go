@@ -13,7 +13,7 @@ func GetAdmins(query string) ([]adminmodel.ViewAdmin, error) {
 	var admins []adminmodel.ViewAdmin
 	var err error = nil
 
-	err = database.DB.Table("admin").Where(qryMap).Find(&admins).Error
+	err = database.DB.Table("admin").Preload("User").Preload("Role").Where(qryMap).Find(&admins).Error
 	if err != nil {
 		return admins, err
 	}

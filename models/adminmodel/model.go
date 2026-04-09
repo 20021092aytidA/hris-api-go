@@ -1,9 +1,13 @@
 package adminmodel
 
-import "time"
+import (
+	"go-hrs/models/rolemodel"
+	"go-hrs/models/usermodel"
+	"time"
+)
 
 type ViewAdmin struct {
-	AdminID   *int       `db:"admin_id" json:"adminID"`
+	AdminID   *int       `db:"admin_id" json:"adminID" gorm:"primarykey"`
 	UserID    *int       `db:"user_id" json:"userID"`
 	RoleID    *int       `db:"role_id" json:"roleID"`
 	Username  *string    `db:"username" json:"username"`
@@ -15,6 +19,9 @@ type ViewAdmin struct {
 	DeletedAt *time.Time `db:"deleted_at" json:"deletedAt"`
 	DeletedBy *int       `db:"deleted_by" json:"deletedBy"`
 	IsDeleted *string    `db:"is_deleted" json:"isDeleted"`
+
+	Role *rolemodel.ViewRole `db:"role" json:"roleDetail,omitempty" gorm:"foreignKey:RoleID;references:RoleID"`
+	User *usermodel.ViewUser `db:"user" json:"userDetail,omitempty" gorm:"foreignKey:UserID;references:UserID"`
 }
 
 type CreateAdmin struct {

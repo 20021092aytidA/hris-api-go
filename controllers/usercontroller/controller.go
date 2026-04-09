@@ -13,10 +13,10 @@ import (
 )
 
 func GetUsers(c *gin.Context) {
-	// isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
-	// if !isValidJWT {
-	// 	return
-	// }
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	if !isValidJWT {
+		return
+	}
 
 	var users []usermodel.ViewUser
 	var err error = nil
@@ -95,10 +95,10 @@ func CreateUser(c *gin.Context) {
 }
 
 func UpdateUser(c *gin.Context) {
-	// isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
-	// if !isValidJWT {
-	// 	return
-	// }
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "user")
+	if !isValidJWT {
+		return
+	}
 
 	id := c.Param("id")
 	var user usermodel.UpdateUser

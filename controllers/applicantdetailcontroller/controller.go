@@ -38,10 +38,10 @@ func GetApplicantDetails(c *gin.Context) {
 }
 
 func CreateApplicantDetail(c *gin.Context) {
-	// isValidJWT := jwthelper.CheckAndValidateToken(c, "applicant detail")
-	// if !isValidJWT {
-	// 	return
-	// }
+	isValidJWT := jwthelper.CheckAndValidateToken(c, "applicant detail")
+	if !isValidJWT {
+		return
+	}
 
 	var applicantDetail applicantdetailmodel.CreateApplicantDetail
 
