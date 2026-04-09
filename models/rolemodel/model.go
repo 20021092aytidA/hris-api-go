@@ -2,8 +2,12 @@ package rolemodel
 
 import "time"
 
+func (ViewRole) TableName() string {
+	return "role"
+}
+
 type ViewRole struct {
-	RoleID    *int       `db:"role_id" json:"roleID"`
+	RoleID    *int       `db:"role_id" json:"roleID" gorm:"primarykey"`
 	RoleName  *string    `db:"role_name" json:"roleName"`
 	CreatedAt *time.Time `db:"created_at" json:"createdAt"`
 	CreatedBy *int       `db:"created_by" json:"createdBy"`

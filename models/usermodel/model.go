@@ -1,9 +1,12 @@
 package usermodel
 
-import "time"
+import (
+	"go-hrs/models/rolemodel"
+	"time"
+)
 
 type ViewUser struct {
-	UserID            *int       `db:"user_id" json:"userID"`
+	UserID            *int       `db:"user_id" json:"userID" gorm:"primarykey"`
 	RoleID            *int       `db:"role_id" json:"roleID"`
 	FullName          *string    `db:"full_name" json:"fullName"`
 	Address           *string    `db:"address" json:"address"`
@@ -24,6 +27,8 @@ type ViewUser struct {
 	DeletedAt         *time.Time `db:"deleted_at" json:"deletedAt"`
 	DeletedBy         *int       `db:"deleted_by" json:"deletedBy"`
 	IsDeleted         *string    `db:"is_deleted" json:"isDeleted"`
+
+	Role *rolemodel.ViewRole `db:"role" json:"roleDetail" gorm:"foreignKey:RoleID"`
 }
 
 type CreateUser struct {
