@@ -2,7 +2,7 @@ package user
 
 import (
 	"go-hrs/models/role"
-	userdetail "go-hrs/models/user_detail"
+	"go-hrs/models/userdetail"
 	"time"
 )
 
