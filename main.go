@@ -5,10 +5,6 @@ import (
 	"go-hrs/config/database"
 	"go-hrs/config/env"
 	"go-hrs/middleware/cors"
-	"go-hrs/routes/adminroute"
-	"go-hrs/routes/applicantdetailroute"
-	"go-hrs/routes/roleroute"
-	"go-hrs/routes/userroute"
 	"os"
 	"strings"
 
@@ -16,20 +12,16 @@ import (
 )
 
 func main() {
-	if err := env.LoadENV(); err != nil {
+	if err := env.Load(); err != nil {
 		panic(strings.ToUpper(err.Error()))
 	}
-	if err := database.LoadMySQL(); err != nil {
+	if err := database.ConnectMySQL(); err != nil {
 		panic(strings.ToUpper(err.Error()))
 	}
 	app := gin.Default()
-	app.Use(cors.CORSMiddleware())
+	app.Use(cors.Setup())
 
 	// ROUTES
-	roleroute.InitRoute(app)
-	adminroute.InitRoute(app)
-	applicantdetailroute.InitRoute(app)
-	userroute.InitRoute(app)
 
 	app.Run(fmt.Sprintf("localhost:%s", os.Getenv("API_PORT")))
 }

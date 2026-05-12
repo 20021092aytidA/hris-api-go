@@ -20,7 +20,7 @@ type structENV struct {
 
 var ENV structENV
 
-func LoadENV() error {
+func Load() error {
 	err := godotenv.Load()
 	if err != nil {
 		return err

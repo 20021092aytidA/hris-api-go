@@ -1,4 +1,4 @@
-package jwthelper
+package jwt
 
 import (
 	"errors"
@@ -14,7 +14,7 @@ type jwtClaim struct {
 	Username string `json:"username"`
 }
 
-func CreateJWTToken(username string) (string, error) {
+func Create(username string) (string, error) {
 	jwtKey := []byte(env.ENV.JWTKey)
 	duration := 24 * time.Hour
 	method := jwt.SigningMethodHS256
@@ -33,8 +33,7 @@ func CreateJWTToken(username string) (string, error) {
 
 }
 
-// verifyToken parses and validates the JWT string
-func VerifyToken(tokenString string) error {
+func Verify(tokenString string) error {
 	jwtKey := []byte(env.ENV.JWTKey)
 	token, err := jwt.ParseWithClaims(tokenString, &jwtClaim{}, func(t *jwt.Token) (any, error) {
 		// Ensure the signing method is what you expect

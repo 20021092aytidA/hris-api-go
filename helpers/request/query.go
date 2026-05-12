@@ -1,4 +1,4 @@
-package requesthelper
+package request
 
 import (
 	"strings"

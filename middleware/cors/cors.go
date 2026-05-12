@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CORSMiddleware() gin.HandlerFunc {
+func Setup() gin.HandlerFunc {
 	var allowedIP = make(map[string]bool)
 	allowedIP[""] = true
 
