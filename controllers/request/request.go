@@ -31,3 +31,31 @@ func Get(c *gin.Context) {
 		"data":    listRequest,
 	})
 }
+
+func Post(c *gin.Context) {
+	var newRequest request.Create
+	if err := c.ShouldBindJSON(&newRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "failed creating new request!",
+			"error":   "missing body!",
+		})
+		return
+	}
+
+	if err := requestservice.Create(newRequest); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": "failed creating new request!",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status":  http.StatusCreated,
+		"message": "new request created!",
+		"data":    newRequest,
+	})
+
+}
