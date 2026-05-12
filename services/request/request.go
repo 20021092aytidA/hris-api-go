@@ -19,3 +19,13 @@ func Create(newRequest request.Create) error {
 
 	return err
 }
+
+func Erase(id string) error {
+	var err error
+	var deleteMap = make(map[string]string)
+	deleteMap["id"] = id
+
+	err = database.DB.Table("requests").Delete(deleteMap).Error
+
+	return err
+}
