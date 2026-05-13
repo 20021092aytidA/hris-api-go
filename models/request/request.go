@@ -22,5 +22,5 @@ type Create struct {
 	UserID      *int      `db:"user_id" json:"userID" binding:"required"`
 	Title       *string   `db:"title" json:"title" binding:"required"`
 	Description *string   `db:"description" json:"description" binding:"required"`
-	CreatedAt   time.Time `db:"created_at" json:"createdAt" binding:"required"`
+	CreatedAt   time.Time `db:"created_at" json:"createdAt"`
 }

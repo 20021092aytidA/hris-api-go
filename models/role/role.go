@@ -11,12 +11,15 @@ type View struct {
 }
 
 type Create struct {
-	RoleName  *string    `db:"role_name" json:"roleName" binding:"required"`
-	CreatedAt *time.Time `db:"created_at" json:"createdAt" binding:"required"`
+	RoleName  *string   `db:"role_name" json:"roleName" binding:"required"`
+	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 }
 
 type Update struct {
-	RoleName *string `db:"role_name" json:"roleName"`
+	RoleName  *string   `db:"role_name" json:"roleName"`
+	UpdatedAt time.Time `db:"updated_at" json:"updatedAt"`
+}
 
-	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt" binding:"required"`
+type Delete struct {
+	Id int `db:"id" gorm:"primaryKey"`
 }
