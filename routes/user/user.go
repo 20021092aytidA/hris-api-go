@@ -1,11 +1,15 @@
 package user
 
-import "github.com/gin-gonic/gin"
+import (
+	"go-hris/controllers/user"
+
+	"github.com/gin-gonic/gin"
+)
 
 func InitRoute(c *gin.Engine) {
 	// VERSION #1
-	// c.GET("hris-api/v1/user")
-	// c.POST("hris-api/v1/user")
-	// c.PUT("hris-api/v1/user/:id")
-	// c.DELETE("hris-api/v1/user/:id")
+	c.GET("hris-api/v1/user", user.Get)
+	c.POST("hris-api/v1/user", user.Post)
+	c.PUT("hris-api/v1/user/:id", user.Put)
+	c.DELETE("hris-api/v1/user/:id", user.Delete)
 }

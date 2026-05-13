@@ -33,3 +33,7 @@ type Update struct {
 	Email     *string    `db:"email" json:"email"`
 	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt"`
 }
+
+type Delete struct {
+	Id int `db:"id" gorm:"primaryKey"`
+}
