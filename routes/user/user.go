@@ -12,4 +12,5 @@ func InitRoute(c *gin.Engine) {
 	c.POST("hris-api/v1/user", user.Post)
 	c.PUT("hris-api/v1/user/:id", user.Put)
 	c.DELETE("hris-api/v1/user/:id", user.Delete)
+	c.POST("hris-api/v1/user/login", user.Login)
 }

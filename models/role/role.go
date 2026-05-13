@@ -2,6 +2,10 @@ package role
 
 import "time"
 
+func (View) TableName() string {
+	return "roles"
+}
+
 type View struct {
 	Id        *int       `db:"id" json:"id" gorm:"primaryKey"`
 	RoleName  *string    `db:"role_name" json:"roleName"`

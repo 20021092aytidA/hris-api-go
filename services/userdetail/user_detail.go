@@ -10,7 +10,7 @@ func Find(qry map[string]any) ([]userdetail.View, error) {
 	var listUserDetail []userdetail.View
 	var err error
 
-	err = database.DB.Table("user_details").Model([]userdetail.View{}).Where(qry).Find(&listUserDetail).Error
+	err = database.DB.Preload("User").Preload("User.Role").Table("user_details").Model([]userdetail.View{}).Where(qry).Find(&listUserDetail).Error
 	return listUserDetail, err
 }
 

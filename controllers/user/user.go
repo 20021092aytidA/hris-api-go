@@ -97,7 +97,7 @@ func Put(c *gin.Context) {
 		var customQry = make(map[string]any)
 		customQry["id"] = id
 
-		currUser, getUserErr := userservice.FindForPassword(request.ProcessQry(fmt.Sprintf("?id=%s", id)))
+		currUser, getUserErr := userservice.FindForPassword(request.ProcessQry(fmt.Sprintf("id=%s", id)))
 		if getUserErr != nil {
 			if errors.Is(getUserErr, gorm.ErrRecordNotFound) {
 				c.JSON(http.StatusNotFound, gin.H{
@@ -198,7 +198,7 @@ func Login(c *gin.Context) {
 	}
 
 	byteLoginPass := []byte(*userLogin.Password)
-	currUser, getCurrErr := userservice.FindForPassword(request.ProcessQry(fmt.Sprintf("?username=%s", *userLogin.Username)))
+	currUser, getCurrErr := userservice.FindForPassword(request.ProcessQry(fmt.Sprintf("username=%s", *userLogin.Username)))
 	if getCurrErr != nil {
 		if errors.Is(getCurrErr, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{

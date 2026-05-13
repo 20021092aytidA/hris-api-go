@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+func (View) TableName() string {
+	return "user_details"
+}
+
 type View struct {
 	Id          *int       `db:"id" json:"id" gorm:"primaryKey"`
 	UserID      *int       `db:"user_id" json:"userID"`
@@ -20,7 +24,7 @@ type View struct {
 
 	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt,omitempty"`
 
-	UserDetail *user.View `db:"users" json:"user" gorm:"foreignKey:UserID;references:Id"`
+	User *user.View `db:"users" json:"user" gorm:"foreignKey:UserID;references:Id"`
 }
 
 type Create struct {

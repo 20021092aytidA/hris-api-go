@@ -9,7 +9,7 @@ import (
 func Find(qry map[string]any) ([]request.View, error) {
 	var listOfRequest []request.View
 	var err error
-	err = database.DB.Table("requests").Model([]request.View{}).Where(qry).Find(&listOfRequest).Error
+	err = database.DB.Preload("User").Table("requests").Model([]request.View{}).Where(qry).Find(&listOfRequest).Error
 
 	return listOfRequest, err
 }

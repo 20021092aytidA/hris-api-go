@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+func (View) TableName() string {
+	return "requests"
+}
+
 type View struct {
 	Id          *int       `db:"id" json:"id" gorm:"primaryKey"`
 	UserID      *int       `db:"user_id" json:"userID"`

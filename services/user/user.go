@@ -19,7 +19,7 @@ func Find(qry map[string]any) ([]user.View, error) {
 	var listUsers []user.View
 	var err error
 
-	err = database.DB.Table("users").Model([]user.View{}).Where(qry).Find(&listUsers).Error
+	err = database.DB.Preload("Role").Table("users").Model([]user.View{}).Where(qry).Find(&listUsers).Error
 	return listUsers, err
 }
 
