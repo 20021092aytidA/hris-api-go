@@ -1,8 +1,8 @@
 package request
 
 import (
-	"go-hrs/config/database"
-	"go-hrs/models/request"
+	"go-hris/config/database"
+	"go-hris/models/request"
 )
 
 func Find(qry map[string]any) ([]request.View, error) {

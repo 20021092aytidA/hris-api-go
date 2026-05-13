@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"go-hrs/config/database"
-	"go-hrs/config/env"
-	"go-hrs/middleware/cors"
-	"go-hrs/routes/request"
-	"go-hrs/routes/role"
-	"go-hrs/routes/user"
-	"go-hrs/routes/userdetail"
+	"go-hris/config/database"
+	"go-hris/config/env"
+	"go-hris/middleware/cors"
+	"go-hris/routes/request"
+	"go-hris/routes/role"
+	"go-hris/routes/user"
+	"go-hris/routes/userdetail"
 	"os"
 	"strings"
 

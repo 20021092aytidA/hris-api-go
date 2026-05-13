@@ -1,8 +1,8 @@
 package user
 
 import (
-	"go-hrs/models/role"
-	"go-hrs/models/userdetail"
+	"go-hris/models/role"
+	"go-hris/models/userdetail"
 	"time"
 )
 

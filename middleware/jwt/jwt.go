@@ -3,7 +3,7 @@ package jwt
 import (
 	"errors"
 	"fmt"
-	"go-hrs/config/env"
+	"go-hris/config/env"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

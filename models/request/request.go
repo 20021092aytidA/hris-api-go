@@ -1,7 +1,7 @@
 package request
 
 import (
-	"go-hrs/models/user"
+	"go-hris/models/user"
 	"time"
 )
 

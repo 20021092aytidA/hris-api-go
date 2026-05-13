@@ -1,4 +1,4 @@
-module go-hrs
+module go-hris
 
 go 1.25.0
 

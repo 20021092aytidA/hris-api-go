@@ -1,9 +1,9 @@
 package request
 
 import (
-	requesthelper "go-hrs/helpers/request"
-	"go-hrs/models/request"
-	requestservice "go-hrs/services/request"
+	requesthelper "go-hris/helpers/request"
+	"go-hris/models/request"
+	requestservice "go-hris/services/request"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

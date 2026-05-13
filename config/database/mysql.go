@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-	"go-hrs/config/env"
+	"go-hris/config/env"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

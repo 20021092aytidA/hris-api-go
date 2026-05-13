@@ -1,7 +1,7 @@
 package request
 
 import (
-	"go-hrs/controllers/request"
+	"go-hris/controllers/request"
 
 	"github.com/gin-gonic/gin"
 )
