@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"go-hris/helpers/request"
+	"go-hris/middleware/jwt"
 	usermodel "go-hris/models/user"
 	userservice "go-hris/services/user"
 	"net/http"
@@ -227,9 +228,20 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	//TOKEN
+	jsonWebToken, jwtErr := jwt.Create(string(*currUser.Id), string(*currUser.RoleID))
+	if jwtErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": "failed logging in!",
+			"error":   "jwt creation failed",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"message": "user logged in!",
-		"token":   "",
+		"token":   jsonWebToken,
 	})
 }

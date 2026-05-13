@@ -11,29 +11,30 @@ import (
 
 type jwtClaim struct {
 	jwt.RegisteredClaims
-	Username string `json:"username"`
+	UserID string `json:"userID"`
+	RoleID string `json:"roleID"`
 }
 
-func Create(username string) (string, error) {
+func Create(userID string, roleID string) (string, error) {
 	jwtKey := []byte(env.ENV.JWTKey)
 	duration := 24 * time.Hour
 	method := jwt.SigningMethodHS256
 
 	claim := jwtClaim{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "pacific",
+			Issuer:    "hris-api-go",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
 		},
-		Username: username,
+		UserID: userID,
+		RoleID: roleID,
 	}
 
 	token := jwt.NewWithClaims(method, claim)
 	return token.SignedString(jwtKey)
-
 }
 
-func Verify(tokenString string) error {
+func Verify(tokenString string) (*jwt.Token, error) {
 	jwtKey := []byte(env.ENV.JWTKey)
 	token, err := jwt.ParseWithClaims(tokenString, &jwtClaim{}, func(t *jwt.Token) (any, error) {
 		// Ensure the signing method is what you expect
@@ -44,12 +45,12 @@ func Verify(tokenString string) error {
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !token.Valid {
-		return errors.New("INVALID TOKEN")
+		return nil, errors.New("INVALID TOKEN")
 	}
 
-	return nil
+	return token, nil
 }
