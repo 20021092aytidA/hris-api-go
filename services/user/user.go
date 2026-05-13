@@ -6,6 +6,15 @@ import (
 	"strconv"
 )
 
+func FindForPassword(qry map[string]any) (user.ViewWithPass, error) {
+	var uSer user.ViewWithPass
+	var err error
+
+	err = database.DB.Table("users").Model(user.ViewWithPass{}).Where(qry).First(&uSer).Error
+
+	return uSer, err
+}
+
 func Find(qry map[string]any) ([]user.View, error) {
 	var listUsers []user.View
 	var err error

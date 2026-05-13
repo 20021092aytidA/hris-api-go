@@ -75,6 +75,7 @@ func Put(c *gin.Context) {
 		return
 	}
 
+	newUserDetail.UpdatedAt = time.Now()
 	if err := userdetailservice.Update(id, newUserDetail); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
