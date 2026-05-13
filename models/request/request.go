@@ -24,3 +24,7 @@ type Create struct {
 	Description *string   `db:"description" json:"description" binding:"required"`
 	CreatedAt   time.Time `db:"created_at" json:"createdAt"`
 }
+
+type Delete struct {
+	Id int `db:"id" gorm:"primaryKey"`
+}

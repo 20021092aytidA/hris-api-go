@@ -5,6 +5,7 @@ import (
 	"go-hris/models/request"
 	requestservice "go-hris/services/request"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,6 +44,7 @@ func Post(c *gin.Context) {
 		return
 	}
 
+	newRequest.CreatedAt = time.Now()
 	if err := requestservice.Create(newRequest); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,

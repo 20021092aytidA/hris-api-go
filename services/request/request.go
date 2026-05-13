@@ -3,6 +3,7 @@ package request
 import (
 	"go-hris/config/database"
 	"go-hris/models/request"
+	"strconv"
 )
 
 func Find(qry map[string]any) ([]request.View, error) {
@@ -21,11 +22,12 @@ func Create(newRequest request.Create) error {
 }
 
 func Erase(id string) error {
+	numID, _ := strconv.Atoi(id)
 	var err error
-	var deleteMap = make(map[string]string)
-	deleteMap["id"] = id
 
-	err = database.DB.Table("requests").Delete(deleteMap).Error
+	err = database.DB.Table("requests").Delete(request.Delete{
+		Id: numID,
+	}).Error
 
 	return err
 }
