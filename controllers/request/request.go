@@ -84,6 +84,6 @@ func Delete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
-		"message": "success request deletion!",
+		"message": "request with ID: " + id + " deleted!",
 	})
 }
