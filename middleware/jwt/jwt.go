@@ -11,11 +11,11 @@ import (
 
 type jwtClaim struct {
 	jwt.RegisteredClaims
-	UserID string `json:"userID"`
-	RoleID string `json:"roleID"`
+	UserID int `json:"userID"`
+	RoleID int `json:"roleID"`
 }
 
-func Create(userID string, roleID string) (string, error) {
+func Create(userID int, roleID int) (string, error) {
 	jwtKey := []byte(env.ENV.JWTKey)
 	duration := 24 * time.Hour
 	method := jwt.SigningMethodHS256

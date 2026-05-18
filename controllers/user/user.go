@@ -229,7 +229,7 @@ func Login(c *gin.Context) {
 	}
 
 	//TOKEN
-	jsonWebToken, jwtErr := jwt.Create(string(*currUser.Id), string(*currUser.RoleID))
+	jsonWebToken, jwtErr := jwt.Create(*currUser.Id, *currUser.RoleID)
 	if jwtErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
