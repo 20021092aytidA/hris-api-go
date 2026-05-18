@@ -1,11 +1,13 @@
 package jwt
 
 import (
-	"errors"
 	"fmt"
 	"go-hris/config/env"
+	"net/http"
+	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -34,23 +36,64 @@ func Create(userID int, roleID int) (string, error) {
 	return token.SignedString(jwtKey)
 }
 
-func Verify(tokenString string) (*jwt.Token, error) {
+func Verify(c *gin.Context) {
+
+	bearer := c.GetHeader("Authorization")
+
+	if bearer == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status":  http.StatusUnauthorized,
+			"message": "request failed!",
+			"error":   "token required",
+		})
+
+		c.Abort()
+		return
+	}
+
+	jwtTokenArr := strings.Split(bearer, " ")
+
+	if len(jwtTokenArr) < 2 {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status":  http.StatusUnauthorized,
+			"message": "request failed!",
+			"error":   "token required",
+		})
+
+		c.Abort()
+		return
+	}
+
+	jwtToken := jwtTokenArr[1]
+
 	jwtKey := []byte(env.ENV.JWTKey)
-	token, err := jwt.ParseWithClaims(tokenString, &jwtClaim{}, func(t *jwt.Token) (any, error) {
+	token, err := jwt.ParseWithClaims(jwtToken, &jwtClaim{}, func(t *jwt.Token) (any, error) {
 		// Ensure the signing method is what you expect
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("UNEXPECTED SIGNING METHOD: %v", t.Header["alg"])
+			return nil, fmt.Errorf("unexpected singing method (%v)", t.Header["alg"])
 		}
 		return jwtKey, nil
 	})
 
 	if err != nil {
-		return nil, err
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"status":  http.StatusUnauthorized,
+			"message": "failed verification jwt!",
+			"error":   err.Error(),
+		})
+		c.Abort()
+		return
 	}
 
 	if !token.Valid {
-		return nil, errors.New("INVALID TOKEN")
+		c.JSON(http.StatusForbidden, gin.H{
+			"status":  http.StatusForbidden,
+			"message": "failed verification jwt!",
+			"error":   "invalid token",
+		})
+		c.Abort()
+		return
 	}
 
-	return token, nil
+	c.Next()
 }

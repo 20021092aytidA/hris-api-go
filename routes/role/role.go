@@ -2,14 +2,19 @@ package role
 
 import (
 	"go-hris/controllers/role"
+	"go-hris/middleware/jwt"
 
 	"github.com/gin-gonic/gin"
 )
 
 func InitRoute(c *gin.Engine) {
 	// VERSION #1
-	c.GET("hris-api/v1/role", role.Get)
-	c.POST("hris-api/v1/role", role.Post)
-	c.PUT("hris-api/v1/role/:id", role.Put)
-	c.DELETE("hris-api/v1/role/:id", role.Delete)
+	{
+		//NEED JWT
+		v1 := c.Group("hris-api/v1", jwt.Verify)
+		v1.GET("/role", role.Get)
+		v1.POST("/role", role.Post)
+		v1.PUT("/role/:id", role.Put)
+		v1.DELETE("/role/:id", role.Delete)
+	}
 }
