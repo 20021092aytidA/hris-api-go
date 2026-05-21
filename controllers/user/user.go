@@ -239,6 +239,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	c.SetCookie("jwt", jsonWebToken, int(24*time.Hour), "/", "localhost", true, true)
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"message": "user logged in!",

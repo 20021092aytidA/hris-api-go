@@ -37,9 +37,7 @@ func Create(userID int, roleID int) (string, error) {
 }
 
 func Verify(c *gin.Context) {
-
 	bearer := c.GetHeader("Authorization")
-
 	if bearer == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"status":  http.StatusUnauthorized,
