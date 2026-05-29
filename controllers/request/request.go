@@ -62,6 +62,37 @@ func Post(c *gin.Context) {
 
 }
 
+func Put(c *gin.Context) {
+	id := c.Param("id")
+
+	var newRequest request.Update
+	if err := c.ShouldBindJSON(&newRequest); err != nil || id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "failed updating role!",
+			"error":   "missing body or param",
+		})
+		return
+	}
+
+	newRequest.UpdatedAt = time.Now()
+	if err := requestservice.Update(id, newRequest); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": "failed updating request!",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "request updated!",
+		"data":    newRequest,
+	})
+
+}
+
 func Delete(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {

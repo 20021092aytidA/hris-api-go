@@ -14,6 +14,7 @@ func InitRoute(c *gin.Engine) {
 		v1 := c.Group("hris-api/v1", jwt.Verify)
 		v1.GET("/request", request.Get)
 		v1.POST("/request", request.Post)
+		v1.PUT("/request/:id", request.Put)
 		v1.DELETE("/request/:id", request.Delete)
 	}
 }

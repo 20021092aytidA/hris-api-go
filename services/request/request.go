@@ -21,6 +21,13 @@ func Create(newRequest request.Create) error {
 	return err
 }
 
+func Update(id string, updateRequest request.Update) error {
+	var err error
+	err = database.DB.Table("requests").Model(request.Update{}).Where("id = ?", id).Updates(updateRequest).Error
+
+	return err
+}
+
 func Erase(id string) error {
 	numID, _ := strconv.Atoi(id)
 	var err error

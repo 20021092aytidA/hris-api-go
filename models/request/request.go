@@ -29,6 +29,11 @@ type Create struct {
 	CreatedAt   time.Time `db:"created_at" json:"createdAt"`
 }
 
+type Update struct {
+	Status    *string   `db:"status" json:"status" binding:"required"`
+	UpdatedAt time.Time `db:"updated_at" json:"updatedAt"`
+}
+
 type Delete struct {
 	Id int `db:"id" gorm:"primaryKey"`
 }
