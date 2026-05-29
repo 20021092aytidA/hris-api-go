@@ -35,6 +35,7 @@ type View struct {
 }
 
 type Create struct {
+	Id       uint    `db:"id" json:"id" gorm:"primaryKey;autoIncrement;column:id"`
 	RoleID   *int    `db:"role_id" json:"roleID" binding:"required"`
 	Password *string `db:"password" json:"password" binding:"required"`
 	Username *string `db:"username" json:"username" binding:"required"`

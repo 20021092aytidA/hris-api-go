@@ -23,11 +23,11 @@ func Find(qry map[string]any) ([]user.View, error) {
 	return listUsers, err
 }
 
-func Create(newUser user.Create) error {
+func Create(newUser *user.Create) (*user.Create, error) {
 	var err error
 
 	err = database.DB.Table("users").Model(user.Create{}).Create(newUser).Error
-	return err
+	return newUser, err
 }
 
 func Update(id string, newUser user.Update) error {

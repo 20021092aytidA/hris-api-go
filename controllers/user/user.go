@@ -62,12 +62,13 @@ func Post(c *gin.Context) {
 		return
 	}
 	*newUser.Password = string(byteHashedPass)
-
-	if err := userservice.Create(newUser); err != nil {
+	var createdUser *usermodel.Create
+	var errCreation error
+	if createdUser, errCreation = userservice.Create(&newUser); errCreation != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
 			"message": "failed creating new user!",
-			"error":   err.Error(),
+			"error":   errCreation.Error(),
 		})
 		return
 	}
@@ -75,7 +76,7 @@ func Post(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"status":  http.StatusCreated,
 		"message": "user created!",
-		"data":    newUser,
+		"data":    createdUser,
 	})
 }
 
