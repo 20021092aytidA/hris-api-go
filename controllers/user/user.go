@@ -242,9 +242,23 @@ func Login(c *gin.Context) {
 
 	c.SetCookie("jwt", jsonWebToken, int(24*time.Hour), "/", "localhost", true, true)
 
+	var qry = make(map[string]any)
+	qry["username"] = *userLogin.Username
+
+	currUserWithoutPass, errFind := userservice.Find(qry)
+	if errFind != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": "failed finding user!",
+			"error":   errFind.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusOK,
-		"message": "user logged in!",
-		"token":   jsonWebToken,
+		"status":   http.StatusOK,
+		"message":  "user logged in!",
+		"currUser": currUserWithoutPass,
+		"token":    jsonWebToken,
 	})
 }
