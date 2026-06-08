@@ -93,5 +93,15 @@ func Verify(c *gin.Context) {
 		return
 	}
 
-	c.Next()
+	url := c.Request.URL.String()
+	splitURL := strings.Split(url, "/")
+	if splitURL[len(splitURL)-1] == "token" {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  http.StatusOK,
+			"message": "verification jwt successful!",
+		})
+		c.Next()
+	} else {
+		c.Next()
+	}
 }
