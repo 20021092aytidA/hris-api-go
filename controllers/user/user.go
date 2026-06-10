@@ -258,7 +258,7 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":   http.StatusOK,
 		"message":  "user logged in!",
-		"currUser": currUserWithoutPass,
+		"currUser": currUserWithoutPass[0],
 		"token":    jsonWebToken,
 	})
 }
