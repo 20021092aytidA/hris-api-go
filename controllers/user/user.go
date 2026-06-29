@@ -2,8 +2,6 @@ package user
 
 import (
 	"errors"
-	"fmt"
-	"go-hris/helpers/request"
 	"go-hris/middleware/jwt"
 	usermodel "go-hris/models/user"
 	userservice "go-hris/services/user"
@@ -18,9 +16,21 @@ import (
 func Get(c *gin.Context) {
 	var listUsers []usermodel.View
 	var err error
-	qry := c.Request.URL.RawQuery
 
-	listUsers, err = userservice.Find(request.ProcessQry(qry))
+	var param usermodel.AllParam
+	param.Pagination.Page = 1
+	param.Pagination.Limit = 10
+
+	if errParam := c.ShouldBindQuery(&param); errParam != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "failed retrieving users!",
+			"error":   errParam.Error(),
+		})
+		return
+	}
+
+	listUsers, err = userservice.Find(param)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
@@ -49,19 +59,6 @@ func Post(c *gin.Context) {
 		return
 	}
 
-	newUser.CreatedAt = time.Now()
-	//PASSWORD
-	bytePass := []byte(*newUser.Password)
-	byteHashedPass, errHash := bcrypt.GenerateFromPassword(bytePass, 10)
-	if errHash != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status":  http.StatusInternalServerError,
-			"message": "failed creating new user!",
-			"error":   "password hashing\n" + errHash.Error(),
-		})
-		return
-	}
-	*newUser.Password = string(byteHashedPass)
 	var createdUser *usermodel.Create
 	var errCreation error
 	if createdUser, errCreation = userservice.Create(&newUser); errCreation != nil {
@@ -93,57 +90,6 @@ func Put(c *gin.Context) {
 		return
 	}
 
-	newUser.UpdatedAt = time.Now()
-	//PASSWORD
-	if newUser.Password != nil {
-		var customQry = make(map[string]any)
-		customQry["id"] = id
-
-		currUser, getUserErr := userservice.FindForPassword(request.ProcessQry(fmt.Sprintf("id=%s", id)))
-		if getUserErr != nil {
-			if errors.Is(getUserErr, gorm.ErrRecordNotFound) {
-				c.JSON(http.StatusNotFound, gin.H{
-					"status":  http.StatusNotFound,
-					"message": "failed updating user!",
-					"error":   "user not found",
-				})
-				return
-			}
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"status":  http.StatusInternalServerError,
-				"message": "failed updating user!",
-				"error":   "password validation failed (GET)",
-			})
-			return
-		}
-
-		byteCurrPass := []byte(*currUser.Password)
-		byteConfirmPass := []byte(*newUser.ConfirmPassword)
-		byteNewPass := []byte(*newUser.Password)
-
-		errHash := bcrypt.CompareHashAndPassword(byteCurrPass, byteConfirmPass)
-		if errHash != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"status":  http.StatusUnauthorized,
-				"message": "failed to update user!",
-				"error":   "incorrect password",
-			})
-			return
-		}
-
-		hashNewPass, hashErr := bcrypt.GenerateFromPassword(byteNewPass, 10)
-		if hashErr != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"status":  http.StatusInternalServerError,
-				"message": "failed to update user!",
-				"error":   "hashing password",
-			})
-			return
-		}
-
-		*newUser.Password = string(hashNewPass)
-	}
-
 	if err := userservice.Update(id, newUser); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
@@ -156,7 +102,6 @@ func Put(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"message": "user updated!",
-		"data":    newUser,
 	})
 }
 
@@ -200,7 +145,12 @@ func Login(c *gin.Context) {
 	}
 
 	byteLoginPass := []byte(*userLogin.Password)
-	currUser, getCurrErr := userservice.FindForPassword(request.ProcessQry(fmt.Sprintf("username=%s", *userLogin.Username)))
+	paramForPassword := usermodel.AllParam{
+		AllowedParam: usermodel.AllowedParam{
+			Username: *userLogin.Username,
+		},
+	}
+	currUser, getCurrErr := userservice.FindForPassword(paramForPassword)
 	if getCurrErr != nil {
 		if errors.Is(getCurrErr, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -242,10 +192,10 @@ func Login(c *gin.Context) {
 
 	c.SetCookie("jwt", jsonWebToken, int(24*time.Hour), "/", "localhost", true, true)
 
-	var qry = make(map[string]any)
-	qry["username"] = *userLogin.Username
+	var param usermodel.AllParam
+	param.AllowedParam.Username = *userLogin.Username
 
-	currUserWithoutPass, errFind := userservice.Find(qry)
+	currUserWithoutPass, errFind := userservice.Find(param)
 	if errFind != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
