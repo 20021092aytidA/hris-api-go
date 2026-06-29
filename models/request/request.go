@@ -51,7 +51,3 @@ type Update struct {
 	Status    *string   `db:"status" json:"status" binding:"required"`
 	UpdatedAt time.Time `db:"updated_at" json:"updatedAt" gorm:"autoUpdateTime"`
 }
-
-type Delete struct {
-	Id int `db:"id" gorm:"primaryKey"`
-}
