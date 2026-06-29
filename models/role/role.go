@@ -31,10 +31,10 @@ type View struct {
 
 type Create struct {
 	RoleName  *string   `db:"role_name" json:"roleName" binding:"required"`
-	CreatedAt time.Time `db:"created_at" json:"createdAt"`
+	CreatedAt time.Time `db:"created_at" json:"createdAt" gorm:"autoCreateTime"`
 }
 
 type Update struct {
 	RoleName  *string   `db:"role_name" json:"roleName"`
-	UpdatedAt time.Time `db:"updated_at" json:"updatedAt"`
+	UpdatedAt time.Time `db:"updated_at" json:"updatedAt" gorm:"autoUpdateTime"`
 }

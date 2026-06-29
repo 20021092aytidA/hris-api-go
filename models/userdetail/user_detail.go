@@ -9,6 +9,28 @@ func (View) TableName() string {
 	return "user_details"
 }
 
+type Pagination struct {
+	Page  int `form:"page"`
+	Limit int `form:"limit"`
+}
+
+type AllowedParam struct {
+	Id          string `form:"id"`
+	UserID      string `form:"userID"`
+	FullName    string `form:"fullName"`
+	Address     string `form:"address"`
+	JobPosition string `form:"jobPosition"`
+	Salary      string `form:"salary"`
+	DateOfBirth string `form:"dateOfBirth"`
+	JoinDate    string `form:"joinDate"`
+	LeaveAmount string `form:"leaveAmount"`
+}
+
+type AllParam struct {
+	AllowedParam
+	Pagination
+}
+
 type View struct {
 	Id          *int       `db:"id" json:"id" gorm:"primaryKey"`
 	UserID      *int       `db:"user_id" json:"userID"`
@@ -38,7 +60,7 @@ type Create struct {
 
 	LeaveAmount *int      `db:"leave_amount" json:"leaveAmount"`
 	Note        *string   `db:"note" json:"note"`
-	CreatedAt   time.Time `db:"created_at" json:"createdAt"`
+	CreatedAt   time.Time `db:"created_at" json:"createdAt" gorm:"autoCreateTime"`
 }
 
 type Update struct {
@@ -52,9 +74,5 @@ type Update struct {
 	LeaveAmount *int    `db:"leave_amount" json:"leaveAmount"`
 	Note        *string `db:"note" json:"note"`
 
-	UpdatedAt time.Time `db:"updated_at" json:"updatedAt"`
-}
-
-type Delete struct {
-	Id int `db:"id" gorm:"primaryKey"`
+	UpdatedAt time.Time `db:"updated_at" json:"updatedAt" gorm:"autoUpdateTime"`
 }

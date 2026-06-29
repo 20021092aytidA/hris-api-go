@@ -1,7 +1,6 @@
 package userdetail
 
 import (
-	"go-hris/helpers/request"
 	userdetailmodel "go-hris/models/userdetail"
 	userdetailservice "go-hris/services/userdetail"
 	"net/http"
@@ -13,9 +12,24 @@ import (
 func Get(c *gin.Context) {
 	var listUserDetails []userdetailmodel.View
 	var err error
-	qry := c.Request.URL.RawQuery
 
-	listUserDetails, err = userdetailservice.Find(request.ProcessQry(qry))
+	param := userdetailmodel.AllParam{
+		Pagination: userdetailmodel.Pagination{
+			Page:  1,
+			Limit: 10,
+		},
+	}
+
+	if errParam := c.ShouldBindQuery(&param); errParam != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "failed retrieving user details",
+			"error":   errParam.Error(),
+		})
+		return
+	}
+
+	listUserDetails, err = userdetailservice.Find(param)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
