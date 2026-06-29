@@ -1,11 +1,9 @@
 package request
 
 import (
-	requesthelper "go-hris/helpers/request"
 	"go-hris/models/request"
 	requestservice "go-hris/services/request"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,8 +12,20 @@ func Get(c *gin.Context) {
 	var listRequest []request.View
 	var err error
 
-	qry := requesthelper.ProcessQry(c.Request.URL.RawQuery)
-	listRequest, err = requestservice.Find(qry)
+	var param request.AllParam
+	param.Pagination.Page = 1
+	param.Pagination.Limit = 10
+
+	if errParam := c.ShouldBindQuery(&param); errParam != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "failed retrieving request!",
+			"error":   errParam.Error(),
+		})
+		return
+	}
+
+	listRequest, err = requestservice.Find(param)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -44,7 +54,6 @@ func Post(c *gin.Context) {
 		return
 	}
 
-	newRequest.CreatedAt = time.Now()
 	if err := requestservice.Create(newRequest); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
@@ -75,7 +84,6 @@ func Put(c *gin.Context) {
 		return
 	}
 
-	newRequest.UpdatedAt = time.Now()
 	if err := requestservice.Update(id, newRequest); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,

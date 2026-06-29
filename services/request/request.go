@@ -3,38 +3,26 @@ package request
 import (
 	"go-hris/config/database"
 	"go-hris/models/request"
-	"strconv"
 )
 
-func Find(qry map[string]any) ([]request.View, error) {
-	var listOfRequest []request.View
-	var err error
-	err = database.DB.Preload("User").Table("requests").Model([]request.View{}).Where(qry).Find(&listOfRequest).Error
-
-	return listOfRequest, err
+func Find(param request.AllParam) ([]request.View, error) {
+	var listRequest []request.View
+	offset := (param.Pagination.Page - 1) * param.Pagination.Limit
+	err := database.DB.Table("requests").Where(&param.AllowedParam).Offset(offset).Limit(param.Pagination.Limit).Find(&listRequest).Error
+	return listRequest, err
 }
 
 func Create(newRequest request.Create) error {
-	var err error
-	err = database.DB.Table("requests").Model(request.Create{}).Create(newRequest).Error
-
+	err := database.DB.Table("requests").Model(request.Create{}).Create(&newRequest).Error
 	return err
 }
 
 func Update(id string, updateRequest request.Update) error {
-	var err error
-	err = database.DB.Table("requests").Model(request.Update{}).Where("id = ?", id).Updates(updateRequest).Error
-
+	err := database.DB.Table("requests").Model(request.Update{}).Where("id = ?", id).Updates(&updateRequest).Error
 	return err
 }
 
 func Erase(id string) error {
-	numID, _ := strconv.Atoi(id)
-	var err error
-
-	err = database.DB.Table("requests").Delete(request.Delete{
-		Id: numID,
-	}).Error
-
+	err := database.DB.Table("requests").Delete(request.View{}, id).Error
 	return err
 }
