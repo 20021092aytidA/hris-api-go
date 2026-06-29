@@ -17,14 +17,14 @@ func Find(qry map[string]any) ([]userdetail.View, error) {
 func Create(newUserDetail userdetail.Create) error {
 	var err error
 
-	err = database.DB.Table("user_details").Model(userdetail.Create{}).Create(newUserDetail).Error
+	err = database.DB.Table("user_details").Model(userdetail.Create{}).Create(&newUserDetail).Error
 	return err
 }
 
 func Update(id string, newUserDetail userdetail.Update) error {
 	var err error
 
-	err = database.DB.Table("user_details").Model(userdetail.Update{}).Where("id = ?", id).Updates(newUserDetail).Error
+	err = database.DB.Table("user_details").Model(userdetail.Update{}).Where("id = ?", id).Updates(&newUserDetail).Error
 	return err
 }
 

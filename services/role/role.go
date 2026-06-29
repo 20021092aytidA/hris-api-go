@@ -13,12 +13,12 @@ func Find(param role.AllParam) ([]role.View, error) {
 }
 
 func Create(newRole role.Create) error {
-	err := database.DB.Table("roles").Model(role.Create{}).Create(newRole).Error
+	err := database.DB.Table("roles").Model(role.Create{}).Create(&newRole).Error
 	return err
 }
 
 func Update(id string, newRole role.Update) error {
-	err := database.DB.Table("roles").Model(role.Update{}).Where("id = ?", id).Updates(newRole).Error
+	err := database.DB.Table("roles").Model(role.Update{}).Where("id = ?", id).Updates(&newRole).Error
 	return err
 }
 

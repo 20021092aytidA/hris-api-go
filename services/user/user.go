@@ -21,7 +21,7 @@ func Find(param user.AllParam) ([]user.View, error) {
 func Create(newUser *user.Create) (*user.Create, error) {
 	var err error
 
-	err = database.DB.Table("users").Model(user.Create{}).Create(newUser).Error
+	err = database.DB.Table("users").Model(user.Create{}).Create(&newUser).Error
 	return newUser, err
 }
 
