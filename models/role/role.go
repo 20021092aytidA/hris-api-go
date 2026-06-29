@@ -6,6 +6,21 @@ func (View) TableName() string {
 	return "roles"
 }
 
+type Pagination struct {
+	Page  int `form:"page"`
+	Limit int `form:"limit"`
+}
+
+type AllowedParam struct {
+	Id       string `form:"id"`
+	RoleName string `form:"roleName"`
+}
+
+type AllParam struct {
+	AllowedParam
+	Pagination
+}
+
 type View struct {
 	Id        *int       `db:"id" json:"id" gorm:"primaryKey"`
 	RoleName  *string    `db:"role_name" json:"roleName"`
@@ -22,8 +37,4 @@ type Create struct {
 type Update struct {
 	RoleName  *string   `db:"role_name" json:"roleName"`
 	UpdatedAt time.Time `db:"updated_at" json:"updatedAt"`
-}
-
-type Delete struct {
-	Id int `db:"id" gorm:"primaryKey"`
 }

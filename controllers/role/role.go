@@ -1,7 +1,6 @@
 package role
 
 import (
-	"go-hris/helpers/request"
 	rolemodel "go-hris/models/role"
 	roleservice "go-hris/services/role"
 	"net/http"
@@ -13,9 +12,24 @@ import (
 func Get(c *gin.Context) {
 	var listRoles []rolemodel.View
 	var err error
-	qry := c.Request.URL.RawQuery
 
-	listRoles, err = roleservice.Find(request.ProcessQry(qry))
+	param := rolemodel.AllParam{
+		Pagination: rolemodel.Pagination{
+			Page:  1,
+			Limit: 10,
+		},
+	}
+
+	if errParam := c.ShouldBindQuery(&param); errParam != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "failed retrieving roles!",
+			"error":   errParam.Error(),
+		})
+		return
+	}
+
+	listRoles, err = roleservice.Find(param)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
