@@ -192,8 +192,15 @@ func Login(c *gin.Context) {
 
 	c.SetCookie("jwt", jsonWebToken, int(24*time.Hour), "/", "localhost", true, true)
 
-	var param usermodel.AllParam
-	param.AllowedParam.Username = *userLogin.Username
+	param := usermodel.AllParam{
+		AllowedParam: usermodel.AllowedParam{
+			Username: *userLogin.Username,
+		},
+		Pagination: usermodel.Pagination{
+			Page:  1,
+			Limit: 1,
+		},
+	}
 
 	currUserWithoutPass, errFind := userservice.Find(param)
 	if errFind != nil {

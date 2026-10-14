@@ -9,6 +9,10 @@ import (
 func Setup() gin.HandlerFunc {
 	var allowedIP = make(map[string]bool)
 	allowedIP[""] = true
+	allowedIP["http://127.0.0.1:3000"] = true
+	allowedIP["http://localhost:3000"] = true
+	allowedIP["127.0.0.1:3000"] = true
+	allowedIP["localhost:3000"] = true
 
 	return func(c *gin.Context) {
 		ip := c.Writer.Header().Get("Origin")
