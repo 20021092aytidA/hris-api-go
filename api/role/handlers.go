@@ -1,36 +1,41 @@
-package request
+package role
 
 import (
-	"go-hris/models/request"
-	requestservice "go-hris/services/request"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Get(c *gin.Context) {
-	var listRequest []request.View
+type Handler struct{}
+
+var roleService Service
+
+func (role Handler) Get(c *gin.Context) {
+	var listRoles []View
 	var err error
 
-	var param request.AllParam
-	param.Pagination.Page = 1
-	param.Pagination.Limit = 10
+	param := AllParam{
+		Pagination: Pagination{
+			Page:  1,
+			Limit: 10,
+		},
+	}
 
 	if errParam := c.ShouldBindQuery(&param); errParam != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
-			"message": "failed retrieving request!",
+			"message": "failed retrieving roles!",
 			"error":   errParam.Error(),
 		})
 		return
 	}
 
-	listRequest, err = requestservice.Find(param)
-
+	listRoles, err = roleService.Find(param)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "failed retrieving request!",
+			"message": "failed retrieving roles!",
 			"error":   err.Error(),
 		})
 		return
@@ -38,26 +43,27 @@ func Get(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
-		"message": "retrieved request!",
-		"data":    listRequest,
+		"message": "retrieved roles!",
+		"data":    listRoles,
 	})
 }
 
-func Post(c *gin.Context) {
-	var newRequest request.Create
-	if err := c.ShouldBindJSON(&newRequest); err != nil {
+func (role Handler) Post(c *gin.Context) {
+	var newRole Create
+	if err := c.ShouldBindJSON(&newRole); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
-			"message": "failed creating new request!",
+			"message": "failed creating role!",
 			"error":   "missing body!",
 		})
 		return
 	}
 
-	if err := requestservice.Create(newRequest); err != nil {
+	newRole.CreatedAt = time.Now()
+	if err := roleService.Create(newRole); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "failed creating new request!",
+			"message": "failed creating new role!",
 			"error":   err.Error(),
 		})
 		return
@@ -65,17 +71,16 @@ func Post(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"status":  http.StatusCreated,
-		"message": "new request created!",
-		"data":    newRequest,
+		"message": "new role created!",
+		"data":    newRole,
 	})
-
 }
 
-func Put(c *gin.Context) {
+func (role Handler) Put(c *gin.Context) {
 	id := c.Param("id")
 
-	var newRequest request.Update
-	if err := c.ShouldBindJSON(&newRequest); err != nil || id == "" {
+	var newRole Update
+	if err := c.ShouldBindJSON(&newRole); err != nil || id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
 			"message": "failed updating role!",
@@ -84,10 +89,11 @@ func Put(c *gin.Context) {
 		return
 	}
 
-	if err := requestservice.Update(id, newRequest); err != nil {
+	newRole.UpdatedAt = time.Now()
+	if err := roleService.Update(id, newRole); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "failed updating request!",
+			"message": "failed updating role!",
 			"error":   err.Error(),
 		})
 		return
@@ -95,27 +101,28 @@ func Put(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
-		"message": "request updated!",
-		"data":    newRequest,
+		"message": "role updated!",
+		"data":    newRole,
 	})
 
 }
 
-func Delete(c *gin.Context) {
+func (role Handler) Delete(c *gin.Context) {
 	id := c.Param("id")
+
 	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
-			"message": "failed deleting request!",
+			"message": "failed deleting role!",
 			"error":   "missing param",
 		})
 		return
 	}
 
-	if err := requestservice.Erase(id); err != nil {
+	if err := roleService.Erase(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
-			"message": "failed deleting request!",
+			"message": "failed deleting role!",
 			"error":   err.Error(),
 		})
 		return
@@ -123,6 +130,6 @@ func Delete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
-		"message": "request with ID: " + id + " deleted!",
+		"message": "role with ID: " + id + " deleted!",
 	})
 }

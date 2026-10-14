@@ -2,7 +2,7 @@ package user
 
 import (
 	"errors"
-	"go-hris/models/role"
+	"go-hris/api/role"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"

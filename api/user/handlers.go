@@ -3,8 +3,6 @@ package user
 import (
 	"errors"
 	"go-hris/middleware/jwt"
-	usermodel "go-hris/models/user"
-	userservice "go-hris/services/user"
 	"net/http"
 	"time"
 
@@ -13,11 +11,15 @@ import (
 	"gorm.io/gorm"
 )
 
-func Get(c *gin.Context) {
-	var listUsers []usermodel.View
+type Handler struct{}
+
+var userService Service
+
+func (user Handler) Get(c *gin.Context) {
+	var listUsers []View
 	var err error
 
-	var param usermodel.AllParam
+	var param AllParam
 	param.Pagination.Page = 1
 	param.Pagination.Limit = 10
 
@@ -30,7 +32,7 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	listUsers, err = userservice.Find(param)
+	listUsers, err = userService.Find(param)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
@@ -47,8 +49,8 @@ func Get(c *gin.Context) {
 	})
 }
 
-func Post(c *gin.Context) {
-	var newUser usermodel.Create
+func (user Handler) Post(c *gin.Context) {
+	var newUser Create
 
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -59,9 +61,9 @@ func Post(c *gin.Context) {
 		return
 	}
 
-	var createdUser *usermodel.Create
+	var createdUser *Create
 	var errCreation error
-	if createdUser, errCreation = userservice.Create(&newUser); errCreation != nil {
+	if createdUser, errCreation = userService.Create(&newUser); errCreation != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
 			"message": "failed creating new user!",
@@ -77,9 +79,9 @@ func Post(c *gin.Context) {
 	})
 }
 
-func Put(c *gin.Context) {
+func (user Handler) Put(c *gin.Context) {
 	id := c.Param("id")
-	var newUser usermodel.Update
+	var newUser Update
 
 	if err := c.ShouldBindJSON(&newUser); err != nil || id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -90,7 +92,7 @@ func Put(c *gin.Context) {
 		return
 	}
 
-	if err := userservice.Update(id, newUser); err != nil {
+	if err := userService.Update(id, newUser); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
 			"message": "failed updating user!",
@@ -105,7 +107,7 @@ func Put(c *gin.Context) {
 	})
 }
 
-func Delete(c *gin.Context) {
+func (user Handler) Delete(c *gin.Context) {
 	id := c.Param("id")
 
 	if id == "" {
@@ -117,7 +119,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	if err := userservice.Erase(id); err != nil {
+	if err := userService.Erase(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
 			"message": "failed deleting user!",
@@ -132,8 +134,8 @@ func Delete(c *gin.Context) {
 	})
 }
 
-func Login(c *gin.Context) {
-	var userLogin usermodel.Login
+func (user Handler) Login(c *gin.Context) {
+	var userLogin Login
 
 	if err := c.ShouldBindJSON(&userLogin); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -145,12 +147,12 @@ func Login(c *gin.Context) {
 	}
 
 	byteLoginPass := []byte(*userLogin.Password)
-	paramForPassword := usermodel.AllParam{
-		AllowedParam: usermodel.AllowedParam{
+	paramForPassword := AllParam{
+		AllowedParam: AllowedParam{
 			Username: *userLogin.Username,
 		},
 	}
-	currUser, getCurrErr := userservice.FindForPassword(paramForPassword)
+	currUser, getCurrErr := userService.FindForPassword(paramForPassword)
 	if getCurrErr != nil {
 		if errors.Is(getCurrErr, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -192,17 +194,17 @@ func Login(c *gin.Context) {
 
 	c.SetCookie("jwt", jsonWebToken, int(24*time.Hour), "/", "localhost", true, true)
 
-	param := usermodel.AllParam{
-		AllowedParam: usermodel.AllowedParam{
+	param := AllParam{
+		AllowedParam: AllowedParam{
 			Username: *userLogin.Username,
 		},
-		Pagination: usermodel.Pagination{
+		Pagination: Pagination{
 			Page:  1,
 			Limit: 1,
 		},
 	}
 
-	currUserWithoutPass, errFind := userservice.Find(param)
+	currUserWithoutPass, errFind := userService.Find(param)
 	if errFind != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,

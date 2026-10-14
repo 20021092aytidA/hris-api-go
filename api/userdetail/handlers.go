@@ -1,20 +1,22 @@
 package userdetail
 
 import (
-	userdetailmodel "go-hris/models/userdetail"
-	userdetailservice "go-hris/services/userdetail"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Get(c *gin.Context) {
-	var listUserDetails []userdetailmodel.View
+type Handler struct{}
+
+var userDetailService Service
+
+func (userDetail Handler) Get(c *gin.Context) {
+	var listUserDetails []View
 	var err error
 
-	param := userdetailmodel.AllParam{
-		Pagination: userdetailmodel.Pagination{
+	param := AllParam{
+		Pagination: Pagination{
 			Page:  1,
 			Limit: 10,
 		},
@@ -29,7 +31,7 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	listUserDetails, err = userdetailservice.Find(param)
+	listUserDetails, err = userDetailService.Find(param)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
@@ -47,8 +49,8 @@ func Get(c *gin.Context) {
 
 }
 
-func Post(c *gin.Context) {
-	var newUserDetail userdetailmodel.Create
+func (userDetail Handler) Post(c *gin.Context) {
+	var newUserDetail Create
 
 	if err := c.ShouldBindJSON(&newUserDetail); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -60,7 +62,7 @@ func Post(c *gin.Context) {
 	}
 
 	newUserDetail.CreatedAt = time.Now()
-	if err := userdetailservice.Create(newUserDetail); err != nil {
+	if err := userDetailService.Create(newUserDetail); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
 			"message": "failed creating new user detail!",
@@ -76,9 +78,9 @@ func Post(c *gin.Context) {
 	})
 }
 
-func Put(c *gin.Context) {
+func (userDetail Handler) Put(c *gin.Context) {
 	id := c.Param("id")
-	var newUserDetail userdetailmodel.Update
+	var newUserDetail Update
 
 	if err := c.ShouldBindJSON(&newUserDetail); err != nil || id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -90,7 +92,7 @@ func Put(c *gin.Context) {
 	}
 
 	newUserDetail.UpdatedAt = time.Now()
-	if err := userdetailservice.Update(id, newUserDetail); err != nil {
+	if err := userDetailService.Update(id, newUserDetail); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
 			"message": "failed updating user detail!",
@@ -106,7 +108,7 @@ func Put(c *gin.Context) {
 	})
 }
 
-func Delete(c *gin.Context) {
+func (userDetail Handler) Delete(c *gin.Context) {
 	id := c.Param("id")
 
 	if id == "" {
@@ -118,7 +120,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	if err := userdetailservice.Erase(id); err != nil {
+	if err := userDetailService.Erase(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status":  http.StatusInternalServerError,
 			"message": "failed deleting user detail!",
