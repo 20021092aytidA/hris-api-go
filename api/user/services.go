@@ -6,27 +6,27 @@ import (
 
 type Service struct{}
 
-func (user Service) FindForPassword(param AllParam) (ViewWithPass, error) {
-	var uSer ViewWithPass
-	err := database.DB.Table("users").Model(ViewWithPass{}).Where(param.AllowedParam).First(&uSer).Error
+func (user Service) FindForPassword(param AllParam) (ViewWithPassModel, error) {
+	var uSer ViewWithPassModel
+	err := database.DB.Table("users").Model(ViewWithPassModel{}).Where(param.AllowedParam).First(&uSer).Error
 	return uSer, err
 }
 
-func (user Service) Find(param AllParam) ([]View, error) {
-	var listUsers []View
+func (user Service) Find(param AllParam) ([]ViewModel, error) {
+	var listUsers []ViewModel
 	offset := (param.Pagination.Page - 1) * param.Pagination.Limit
 	err := database.DB.Table("users").Where(&param.AllowedParam).Offset(offset).Limit(param.Pagination.Limit).Find(&listUsers).Error
 	return listUsers, err
 }
 
-func (user Service) Create(newUser *Create) (*Create, error) {
+func (user Service) Create(newUser *CreateModel) (*CreateModel, error) {
 	var err error
 
-	err = database.DB.Table("users").Model(Create{}).Create(&newUser).Error
+	err = database.DB.Table("users").Model(CreateModel{}).Create(&newUser).Error
 	return newUser, err
 }
 
-func (user Service) Update(id string, newUser Update) error {
+func (user Service) Update(id string, newUser UpdateModel) error {
 	var err error
 
 	err = database.DB.Table("users").Where("id = ?", id).Updates(&newUser).Error
@@ -34,6 +34,6 @@ func (user Service) Update(id string, newUser Update) error {
 }
 
 func (user Service) Erase(id string) error {
-	err := database.DB.Table("users").Delete(View{}, id).Error
+	err := database.DB.Table("users").Delete(ViewModel{}, id).Error
 	return err
 }

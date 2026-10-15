@@ -2,7 +2,7 @@ package role
 
 import "time"
 
-func (View) TableName() string {
+func (ViewModel) TableName() string {
 	return "roles"
 }
 
@@ -21,7 +21,7 @@ type AllParam struct {
 	Pagination
 }
 
-type View struct {
+type ViewModel struct {
 	Id        *int       `db:"id" json:"id" gorm:"primaryKey"`
 	RoleName  *string    `db:"role_name" json:"roleName"`
 	CreatedAt *time.Time `db:"created_at" json:"createdAt"`
@@ -29,12 +29,12 @@ type View struct {
 	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt,omitempty"`
 }
 
-type Create struct {
+type CreateModel struct {
 	RoleName  *string   `db:"role_name" json:"roleName" binding:"required"`
 	CreatedAt time.Time `db:"created_at" json:"createdAt" gorm:"autoCreateTime"`
 }
 
-type Update struct {
+type UpdateModel struct {
 	RoleName  *string   `db:"role_name" json:"roleName"`
 	UpdatedAt time.Time `db:"updated_at" json:"updatedAt" gorm:"autoUpdateTime"`
 }

@@ -11,7 +11,7 @@ type Handler struct{}
 var requestService Service
 
 func (req Handler) Get(c *gin.Context) {
-	var listRequest []View
+	var listRequest []ViewModel
 	var err error
 
 	var param AllParam
@@ -46,7 +46,7 @@ func (req Handler) Get(c *gin.Context) {
 }
 
 func (req Handler) Post(c *gin.Context) {
-	var newRequest Create
+	var newRequest CreateModel
 	if err := c.ShouldBindJSON(&newRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
@@ -76,7 +76,7 @@ func (req Handler) Post(c *gin.Context) {
 func (req Handler) Put(c *gin.Context) {
 	id := c.Param("id")
 
-	var newRequest Update
+	var newRequest UpdateModel
 	if err := c.ShouldBindJSON(&newRequest); err != nil || id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,

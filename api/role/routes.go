@@ -9,8 +9,8 @@ import (
 func InitRoute(v1 *gin.RouterGroup) {
 	var roleHandler Handler
 
-	v1.GET("/role", roleHandler.Get, jwt.Verify)
-	v1.POST("/role", roleHandler.Post, jwt.Verify)
-	v1.PUT("/role/:id", roleHandler.Put, jwt.Verify)
-	v1.DELETE("/role/:id", roleHandler.Delete, jwt.Verify)
+	v1.GET("/role", jwt.Verify, roleHandler.Get)
+	v1.POST("/role", jwt.Verify, roleHandler.Post)
+	v1.PUT("/role/:id", jwt.Verify, roleHandler.Put)
+	v1.DELETE("/role/:id", jwt.Verify, roleHandler.Delete)
 }

@@ -12,7 +12,7 @@ type Handler struct{}
 var roleService Service
 
 func (role Handler) Get(c *gin.Context) {
-	var listRoles []View
+	var listRoles []ViewModel
 	var err error
 
 	param := AllParam{
@@ -49,7 +49,7 @@ func (role Handler) Get(c *gin.Context) {
 }
 
 func (role Handler) Post(c *gin.Context) {
-	var newRole Create
+	var newRole CreateModel
 	if err := c.ShouldBindJSON(&newRole); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,
@@ -79,7 +79,7 @@ func (role Handler) Post(c *gin.Context) {
 func (role Handler) Put(c *gin.Context) {
 	id := c.Param("id")
 
-	var newRole Update
+	var newRole UpdateModel
 	if err := c.ShouldBindJSON(&newRole); err != nil || id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"status":  http.StatusBadRequest,

@@ -11,13 +11,11 @@ import (
 var DB *gorm.DB
 var gormConfig gorm.Config
 
-func ConnectMySQL() error {
+func ConnectMySQL() {
 	var dbErr error = nil
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", env.ENV.DBUser, env.ENV.DBPass, env.ENV.DBHost, env.ENV.DBPort, env.ENV.DBName)
 	DB, dbErr = gorm.Open(mysql.Open(dsn), &gormConfig)
 	if dbErr != nil {
-		return dbErr
+		panic(dbErr.Error())
 	}
-
-	return nil
 }

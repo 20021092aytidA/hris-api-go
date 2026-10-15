@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (user *Create) BeforeCreate(tx *gorm.DB) error {
+func (user *CreateModel) BeforeCreate(tx *gorm.DB) error {
 	if *user.Password != *user.ConfirmPassword {
 		return errors.New("password not match confirm password")
 	}
@@ -24,7 +24,7 @@ func (user *Create) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-func (user *Update) BeforeUpdate(tx *gorm.DB) error {
+func (user *UpdateModel) BeforeUpdate(tx *gorm.DB) error {
 	if user.Password != nil {
 		//EMPTY
 		if *user.Password == "" {
@@ -50,7 +50,7 @@ func (user *Update) BeforeUpdate(tx *gorm.DB) error {
 	return nil
 }
 
-func (View) TableName() string {
+func (ViewModel) TableName() string {
 	return "users"
 }
 
@@ -71,38 +71,38 @@ type AllParam struct {
 	Pagination
 }
 
-type ViewWithPass struct {
-	Id        *int       `db:"id" json:"id" gorm:"primaryKey"`
-	RoleID    *int       `db:"role_id" json:"roleID"`
-	Username  *string    `db:"username" json:"username"`
-	Password  *string    `db:"password" json:"password"`
-	Email     *string    `db:"email" json:"email"`
-	CreatedAt *time.Time `db:"created_at" json:"createdAt"`
-	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt,omitempty"`
-	Role      *role.View `db:"roles" json:"role" gorm:"foreignKey:RoleID;references:Id"`
+type ViewWithPassModel struct {
+	Id        *int            `db:"id" json:"id" gorm:"primaryKey"`
+	RoleID    *int            `db:"role_id" json:"roleID"`
+	Username  *string         `db:"username" json:"username"`
+	Password  *string         `db:"password" json:"password"`
+	Email     *string         `db:"email" json:"email"`
+	CreatedAt *time.Time      `db:"created_at" json:"createdAt"`
+	UpdatedAt *time.Time      `db:"updated_at" json:"updatedAt,omitempty"`
+	Role      *role.ViewModel `db:"roles" json:"role" gorm:"foreignKey:RoleID;references:Id"`
 }
 
-type View struct {
-	Id        *int       `db:"id" json:"id" gorm:"primaryKey"`
-	RoleID    *int       `db:"role_id" json:"roleID"`
-	Username  *string    `db:"username" json:"username"`
-	Email     *string    `db:"email" json:"email"`
-	CreatedAt *time.Time `db:"created_at" json:"createdAt"`
-	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt,omitempty"`
-	Role      *role.View `db:"roles" json:"role" gorm:"foreignKey:RoleID;references:Id"`
+type ViewModel struct {
+	Id        *int            `db:"id" json:"id" gorm:"primaryKey"`
+	RoleID    *int            `db:"role_id" json:"roleID"`
+	Username  *string         `db:"username" json:"username"`
+	Email     *string         `db:"email" json:"email"`
+	CreatedAt *time.Time      `db:"created_at" json:"createdAt"`
+	UpdatedAt *time.Time      `db:"updated_at" json:"updatedAt,omitempty"`
+	Role      *role.ViewModel `db:"roles" json:"role" gorm:"foreignKey:RoleID;references:Id"`
 }
 
-type Create struct {
+type CreateModel struct {
 	Id              uint      `db:"id" json:"id" gorm:"primaryKey;autoIncrement;column:id"`
 	RoleID          *int      `db:"role_id" json:"roleID" binding:"required"`
 	Password        *string   `db:"password" json:"password" binding:"required"`
-	ConfirmPassword *string   `json:"confirmPassword" binding:"required"`
+	ConfirmPassword *string   `json:"confirmPassword" binding:"required" gorm:"-"`
 	Username        *string   `db:"username" json:"username" binding:"required"`
 	Email           *string   `db:"email" json:"email" binding:"required"`
 	CreatedAt       time.Time `db:"created_at" json:"createdAt" gorm:"autoCreateTime"`
 }
 
-type Update struct {
+type UpdateModel struct {
 	RoleID          *int      `db:"role_id" json:"roleID"`
 	Password        *string   `db:"password" json:"password"`
 	ConfirmPassword *string   `json:"confirmPassword"`
@@ -111,7 +111,7 @@ type Update struct {
 	UpdatedAt       time.Time `db:"updated_at" json:"updatedAt" gorm:"autoUpdateTime"`
 }
 
-type Login struct {
+type LoginModel struct {
 	Username *string `db:"username" json:"username" binding:"required"`
 	Password *string `db:"password" json:"password" binding:"required"`
 }

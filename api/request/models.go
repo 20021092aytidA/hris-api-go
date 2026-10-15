@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func (View) TableName() string {
+func (ViewModel) TableName() string {
 	return "requests"
 }
 
@@ -27,7 +27,7 @@ type AllParam struct {
 	Pagination
 }
 
-type View struct {
+type ViewModel struct {
 	Id          *int       `db:"id" json:"id" gorm:"primaryKey"`
 	UserID      *int       `db:"user_id" json:"userID"`
 	Title       *string    `db:"title" json:"title"`
@@ -37,17 +37,17 @@ type View struct {
 
 	UpdatedAt *time.Time `db:"updated_at" json:"updatedAt,omitempty"`
 
-	User *user.View `db:"users" json:"user" gorm:"foreignKey:UserID;references:Id"`
+	User *user.ViewModel `db:"users" json:"user" gorm:"foreignKey:UserID;references:Id"`
 }
 
-type Create struct {
+type CreateModel struct {
 	UserID      *int      `db:"user_id" json:"userID" binding:"required"`
 	Title       *string   `db:"title" json:"title" binding:"required"`
 	Description *string   `db:"description" json:"description" binding:"required"`
 	CreatedAt   time.Time `db:"created_at" json:"createdAt" gorm:"autoCreateTime"`
 }
 
-type Update struct {
+type UpdateModel struct {
 	Status    *string   `db:"status" json:"status" binding:"required"`
 	UpdatedAt time.Time `db:"updated_at" json:"updatedAt" gorm:"autoUpdateTime"`
 }

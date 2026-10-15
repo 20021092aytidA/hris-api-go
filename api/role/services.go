@@ -6,24 +6,24 @@ import (
 
 type Service struct{}
 
-func (role Service) Find(param AllParam) ([]View, error) {
-	var listRole []View
+func (role Service) Find(param AllParam) ([]ViewModel, error) {
+	var listRole []ViewModel
 	offset := (param.Pagination.Page - 1) * param.Pagination.Limit
-	err := database.DB.Table("roles").Model([]View{}).Where(&param.AllowedParam).Offset(offset).Limit(param.Pagination.Limit).Find(&listRole).Error
+	err := database.DB.Table("roles").Model([]ViewModel{}).Where(&param.AllowedParam).Offset(offset).Limit(param.Pagination.Limit).Find(&listRole).Error
 	return listRole, err
 }
 
-func (role Service) Create(newRole Create) error {
-	err := database.DB.Table("roles").Model(Create{}).Create(&newRole).Error
+func (role Service) Create(newRole CreateModel) error {
+	err := database.DB.Table("roles").Model(CreateModel{}).Create(&newRole).Error
 	return err
 }
 
-func (role Service) Update(id string, newRole Update) error {
-	err := database.DB.Table("roles").Model(Update{}).Where("id = ?", id).Updates(&newRole).Error
+func (role Service) Update(id string, newRole UpdateModel) error {
+	err := database.DB.Table("roles").Model(UpdateModel{}).Where("id = ?", id).Updates(&newRole).Error
 	return err
 }
 
 func (role Service) Erase(id string) error {
-	err := database.DB.Table("roles").Delete(View{}, id).Error
+	err := database.DB.Table("roles").Delete(ViewModel{}, id).Error
 	return err
 }

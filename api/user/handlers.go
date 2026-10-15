@@ -16,7 +16,7 @@ type Handler struct{}
 var userService Service
 
 func (user Handler) Get(c *gin.Context) {
-	var listUsers []View
+	var listUsers []ViewModel
 	var err error
 
 	var param AllParam
@@ -50,7 +50,7 @@ func (user Handler) Get(c *gin.Context) {
 }
 
 func (user Handler) Post(c *gin.Context) {
-	var newUser Create
+	var newUser CreateModel
 
 	if err := c.ShouldBindJSON(&newUser); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -61,7 +61,7 @@ func (user Handler) Post(c *gin.Context) {
 		return
 	}
 
-	var createdUser *Create
+	var createdUser *CreateModel
 	var errCreation error
 	if createdUser, errCreation = userService.Create(&newUser); errCreation != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -81,7 +81,7 @@ func (user Handler) Post(c *gin.Context) {
 
 func (user Handler) Put(c *gin.Context) {
 	id := c.Param("id")
-	var newUser Update
+	var newUser UpdateModel
 
 	if err := c.ShouldBindJSON(&newUser); err != nil || id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -135,7 +135,7 @@ func (user Handler) Delete(c *gin.Context) {
 }
 
 func (user Handler) Login(c *gin.Context) {
-	var userLogin Login
+	var userLogin LoginModel
 
 	if err := c.ShouldBindJSON(&userLogin); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

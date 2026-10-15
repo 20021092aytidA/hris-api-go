@@ -12,7 +12,7 @@ type Handler struct{}
 var userDetailService Service
 
 func (userDetail Handler) Get(c *gin.Context) {
-	var listUserDetails []View
+	var listUserDetails []ViewModel
 	var err error
 
 	param := AllParam{
@@ -50,7 +50,7 @@ func (userDetail Handler) Get(c *gin.Context) {
 }
 
 func (userDetail Handler) Post(c *gin.Context) {
-	var newUserDetail Create
+	var newUserDetail CreateModel
 
 	if err := c.ShouldBindJSON(&newUserDetail); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -80,7 +80,7 @@ func (userDetail Handler) Post(c *gin.Context) {
 
 func (userDetail Handler) Put(c *gin.Context) {
 	id := c.Param("id")
-	var newUserDetail Update
+	var newUserDetail UpdateModel
 
 	if err := c.ShouldBindJSON(&newUserDetail); err != nil || id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
