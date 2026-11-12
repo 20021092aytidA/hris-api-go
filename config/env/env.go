@@ -2,6 +2,8 @@ package env
 
 import (
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type structENV struct {
@@ -19,11 +21,8 @@ type structENV struct {
 var ENV structENV
 
 func Load() {
-	// DEVELOPMENT ONLY
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
+	godotenv.Load()
+
 	ENV.DBName = os.Getenv("DB_NAME")
 	ENV.DBHost = os.Getenv("DB_HOST")
 	ENV.DBPort = os.Getenv("DB_PORT")
